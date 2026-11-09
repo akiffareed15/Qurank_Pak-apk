@@ -9,6 +9,7 @@ import {
   Pressable,
   Image,
   ScrollView,
+  useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -29,10 +30,34 @@ import { typography } from '../src/theme/typography';
 // Official App Name
 export const APP_NAME = 'NOOR-UL-QURAN';
 
+// Original image dimensions (704 x 1520) for strict aspect-ratio containment
+const ORIGINAL_IMAGE_WIDTH = 704;
+const ORIGINAL_IMAGE_HEIGHT = 1520;
+const IMAGE_ASPECT_RATIO = ORIGINAL_IMAGE_WIDTH / ORIGINAL_IMAGE_HEIGHT;
+
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { isDark } = useTheme();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+
+  // Strict BoxFit.contain calculation:
+  // Guarantees ZERO cropping, ZERO zooming, ZERO stretching, and ZERO distortion.
+  // The entire original portrait artwork (top arch, lanterns, middle arabesques,
+  // crescent moon, and the full mosque at the bottom) remains 100% visible.
+  let bgWidth = windowWidth;
+  let bgHeight = windowHeight;
+
+  const windowAspectRatio = windowWidth / windowHeight;
+  if (windowAspectRatio < IMAGE_ASPECT_RATIO) {
+    // Screen is taller than the image: fit width, scale height by aspect ratio
+    bgWidth = windowWidth;
+    bgHeight = windowWidth / IMAGE_ASPECT_RATIO;
+  } else {
+    // Screen is wider than the image: fit height, scale width by aspect ratio
+    bgHeight = windowHeight;
+    bgWidth = windowHeight * IMAGE_ASPECT_RATIO;
+  }
 
   const lastSurah = useLastReadStore((s) => s.surah);
   const lastAyah = useLastReadStore((s) => s.ayah);
@@ -78,34 +103,23 @@ export default function HomeScreen() {
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#061610' : '#F6F3EC' }]}>
       {/* Full-Screen Islamic Background Image (Zero Crop, Zero Zoom, Precise Fit) */}
-      <Image
-        key={isDark ? 'dark-bg' : 'light-bg'}
-        source={bgImage}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="stretch"
-      />
-
-      {/* Soft Vignette Overlay in Light Mode for Beautiful Contrast */}
-      {!isDark && (
-        <View
-          style={[
-            StyleSheet.absoluteFillObject,
-            { backgroundColor: 'rgba(255, 255, 255, 0.16)' },
-          ]}
-          pointerEvents="none"
+      <View
+        style={[
+          styles.bgContainer,
+          { backgroundColor: isDark ? '#061610' : '#F6F3EC' },
+        ]}
+        pointerEvents="none"
+      >
+        <Image
+          key={isDark ? 'dark-bg' : 'light-bg'}
+          source={bgImage}
+          style={{
+            width: bgWidth,
+            height: bgHeight,
+          }}
+          resizeMode="contain"
         />
-      )}
-
-      {/* Subtle Dark Theme Overlay (7% Additional Soft Darkening) ONLY on Homepage */}
-      {isDark && (
-        <View
-          style={[
-            StyleSheet.absoluteFillObject,
-            { backgroundColor: 'rgba(0, 0, 0, 0.07)' },
-          ]}
-          pointerEvents="none"
-        />
-      )}
+      </View>
 
       {/* Responsive Content Scroll View */}
       <ScrollView
@@ -309,6 +323,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0A1612',
+  },
+  bgContainer: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
   scrollContent: {
     flexGrow: 1,
