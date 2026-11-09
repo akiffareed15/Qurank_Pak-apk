@@ -1,5 +1,6 @@
 // src/components/AppSplashScreen.tsx
 // Premium, Peaceful Light-Theme Startup Loading Animation for Noor-ul-Quran
+// Pixel-accurate implementation matching user's Islamic architectural reference artwork
 
 import React, { useEffect } from 'react';
 import {
@@ -13,26 +14,195 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  withRepeat,
   withDelay,
   Easing,
   runOnJS,
   ReduceMotion,
 } from 'react-native-reanimated';
+import Svg, {
+  G,
+  Path,
+  Circle,
+  Defs,
+  LinearGradient,
+  Stop,
+  Rect,
+} from 'react-native-svg';
 import { typography } from '../theme/typography';
 
-// Dimensions of the original portrait artwork (704 x 1520)
-const ORIGINAL_IMAGE_WIDTH = 704;
-const ORIGINAL_IMAGE_HEIGHT = 1520;
+// Dimensions of the original portrait artwork (841 x 1870)
+const ORIGINAL_IMAGE_WIDTH = 841;
+const ORIGINAL_IMAGE_HEIGHT = 1870;
 const IMAGE_ASPECT_RATIO = ORIGINAL_IMAGE_WIDTH / ORIGINAL_IMAGE_HEIGHT;
 
-const TRACK_WIDTH = 140;
-const BAR_WIDTH = 48;
+const PROGRESS_TRACK_WIDTH = 236;
 
 interface AppSplashScreenProps {
   onAnimationComplete: () => void;
   isReady: boolean;
 }
+
+/**
+ * Islamic Shamsa Rosette Medallion
+ * 16-lobed gold filigree mandala with concentric beaded rings
+ * and pristine white circular badge frame matching the reference artwork.
+ */
+const RosetteMedallion: React.FC<{ size: number }> = ({ size }) => {
+  const cx = 100;
+  const cy = 100;
+  const numPoints = 16;
+
+  // Generate 16 ornate petal bursts with fleur-de-lis finials
+  const petals = [];
+  for (let i = 0; i < numPoints; i++) {
+    const angle = (i * 2 * Math.PI) / numPoints;
+    const isMajor = i % 2 === 0;
+    const rOuter = isMajor ? 97 : 91;
+    const rInner = 72;
+    const spread = (Math.PI / numPoints) * 0.74;
+
+    const xTip = cx + rOuter * Math.cos(angle);
+    const yTip = cy + rOuter * Math.sin(angle);
+    const xLeft = cx + rInner * Math.cos(angle - spread);
+    const yLeft = cy + rInner * Math.sin(angle - spread);
+    const xRight = cx + rInner * Math.cos(angle + spread);
+    const yRight = cy + rInner * Math.sin(angle + spread);
+
+    const c1x = cx + rOuter * 0.88 * Math.cos(angle - spread * 0.4);
+    const c1y = cy + rOuter * 0.88 * Math.sin(angle - spread * 0.4);
+    const c2x = cx + rOuter * 0.88 * Math.cos(angle + spread * 0.4);
+    const c2y = cy + rOuter * 0.88 * Math.sin(angle + spread * 0.4);
+
+    petals.push(
+      <Path
+        key={`petal-${i}`}
+        d={`M ${xLeft.toFixed(1)} ${yLeft.toFixed(1)} Q ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${xTip.toFixed(1)} ${yTip.toFixed(1)} Q ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${xRight.toFixed(1)} ${yRight.toFixed(1)} Z`}
+        fill="url(#goldGrad)"
+        stroke="#8A5A00"
+        strokeWidth={0.6}
+      />
+    );
+
+    // Mini decorative gold bead at each tip
+    petals.push(
+      <Circle
+        key={`bead-${i}`}
+        cx={cx + (rOuter + 2.5) * Math.cos(angle)}
+        cy={cy + (rOuter + 2.5) * Math.sin(angle)}
+        r={isMajor ? 1.8 : 1.2}
+        fill="url(#goldGrad)"
+      />
+    );
+  }
+
+  // 32 inner delicate golden beads
+  const beads = [];
+  for (let j = 0; j < 32; j++) {
+    const bAngle = (j * 2 * Math.PI) / 32;
+    beads.push(
+      <Circle
+        key={`inner-bead-${j}`}
+        cx={cx + 66.5 * Math.cos(bAngle)}
+        cy={cy + 66.5 * Math.sin(bAngle)}
+        r={1.3}
+        fill="url(#goldGrad)"
+      />
+    );
+  }
+
+  return (
+    <Svg width={size} height={size} viewBox="0 0 200 200">
+      <Defs>
+        <LinearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <Stop offset="0%" stopColor="#FDE68A" />
+          <Stop offset="25%" stopColor="#D4AF37" />
+          <Stop offset="55%" stopColor="#B38018" />
+          <Stop offset="80%" stopColor="#E5B842" />
+          <Stop offset="100%" stopColor="#8A5A00" />
+        </LinearGradient>
+        <LinearGradient id="goldRing" x1="0%" y1="50%" x2="100%" y2="50%">
+          <Stop offset="0%" stopColor="#C5A059" />
+          <Stop offset="50%" stopColor="#FDF2B8" />
+          <Stop offset="100%" stopColor="#C5A059" />
+        </LinearGradient>
+      </Defs>
+
+      {/* Decorative Radiating Petals */}
+      <G>{petals}</G>
+
+      {/* Outer Golden Border Ring */}
+      <Circle
+        cx={cx}
+        cy={cy}
+        r={72}
+        fill="none"
+        stroke="url(#goldGrad)"
+        strokeWidth={2}
+      />
+
+      {/* Inner Beads Ring */}
+      <G>{beads}</G>
+
+      {/* Middle Golden Border Ring */}
+      <Circle
+        cx={cx}
+        cy={cy}
+        r={62}
+        fill="none"
+        stroke="url(#goldRing)"
+        strokeWidth={1.5}
+      />
+
+      {/* Pristine White Circular Badge */}
+      <Circle
+        cx={cx}
+        cy={cy}
+        r={57}
+        fill="#FFFFFF"
+        stroke="url(#goldGrad)"
+        strokeWidth={2.4}
+      />
+    </Svg>
+  );
+};
+
+/**
+ * 8-Pointed Islamic Star (Rub el Hizb) Divider
+ */
+const GoldDivider: React.FC = () => (
+  <View style={styles.dividerRow}>
+    <View style={styles.dividerLine} />
+    <Svg width={16} height={16} viewBox="0 0 24 24" style={styles.dividerStar}>
+      <Defs>
+        <LinearGradient id="starGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <Stop offset="0%" stopColor="#FDE68A" />
+          <Stop offset="50%" stopColor="#D4AF37" />
+          <Stop offset="100%" stopColor="#9C6B10" />
+        </LinearGradient>
+      </Defs>
+      {/* Overlapping Squares forming the 8-pointed star */}
+      <Rect
+        x="6"
+        y="6"
+        width="12"
+        height="12"
+        fill="url(#starGold)"
+        rx={1}
+      />
+      <Rect
+        x="6"
+        y="6"
+        width="12"
+        height="12"
+        fill="url(#starGold)"
+        rx={1}
+        transform="rotate(45 12 12)"
+      />
+      <Circle cx="12" cy="12" r="2.2" fill="#FDFCF9" />
+    </Svg>
+    <View style={styles.dividerLine} />
+  </View>
+);
 
 export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
   onAnimationComplete,
@@ -40,7 +210,8 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
 }) => {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
-  // Strict aspect-ratio containment (preserves full arch, lanterns, and bottom mosque)
+  // Strict aspect-ratio containment:
+  // Preserves 100% of the artwork (both hanging lanterns, top arch, middle sky, and full bottom mosque)
   let bgWidth = windowWidth;
   let bgHeight = windowHeight;
 
@@ -55,88 +226,97 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
 
   // Animation values
   const bgOpacity = useSharedValue(0);
-  const logoOpacity = useSharedValue(0);
-  const logoScale = useSharedValue(0.92);
-  const contentOpacity = useSharedValue(0);
-  const contentTranslateY = useSharedValue(12);
-  const progressTranslateX = useSharedValue(-BAR_WIDTH);
+  const medallionOpacity = useSharedValue(0);
+  const medallionScale = useSharedValue(0.92);
+  const titlesOpacity = useSharedValue(0);
+  const titlesTranslateY = useSharedValue(8);
+  const progressPercent = useSharedValue(0);
+  const loadingTextOpacity = useSharedValue(0);
   const containerOpacity = useSharedValue(1);
 
   useEffect(() => {
-    // Phase 1: Background appearance (smooth, gentle fade-in)
+    // Phase 1: Background image fade-in
     bgOpacity.value = withTiming(1, {
-      duration: 450,
+      duration: 350,
       easing: Easing.out(Easing.ease),
       reduceMotion: ReduceMotion.System,
     });
 
-    // Phase 2: Original logo appearance (gentle opacity & subtle scale)
-    logoOpacity.value = withDelay(
-      150,
+    // Phase 2: Islamic Medallion + Logo appearance
+    medallionOpacity.value = withDelay(
+      80,
       withTiming(1, {
-        duration: 600,
+        duration: 500,
         easing: Easing.out(Easing.cubic),
         reduceMotion: ReduceMotion.System,
       })
     );
-    logoScale.value = withDelay(
-      150,
+    medallionScale.value = withDelay(
+      80,
       withTiming(1, {
-        duration: 600,
+        duration: 500,
         easing: Easing.out(Easing.cubic),
         reduceMotion: ReduceMotion.System,
       })
     );
 
-    // Phase 3: Application branding (Arabic title, English title, Bismillah)
-    contentOpacity.value = withDelay(
-      300,
+    // Phase 3: Typography & branding
+    titlesOpacity.value = withDelay(
+      180,
       withTiming(1, {
-        duration: 650,
+        duration: 550,
         easing: Easing.out(Easing.cubic),
         reduceMotion: ReduceMotion.System,
       })
     );
-    contentTranslateY.value = withDelay(
-      300,
+    titlesTranslateY.value = withDelay(
+      180,
       withTiming(0, {
-        duration: 650,
+        duration: 550,
         easing: Easing.out(Easing.cubic),
         reduceMotion: ReduceMotion.System,
       })
     );
 
-    // Phase 4: Antique-gold indeterminate loading indicator
-    progressTranslateX.value = withRepeat(
-      withTiming(TRACK_WIDTH, {
-        duration: 1300,
-        easing: Easing.inOut(Easing.sin),
+    // Phase 4: Smooth progress fill from 0 to 100% over 1500ms
+    progressPercent.value = withDelay(
+      150,
+      withTiming(1, {
+        duration: 1500,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
         reduceMotion: ReduceMotion.System,
-      }),
-      -1,
-      false
+      })
+    );
+
+    loadingTextOpacity.value = withDelay(
+      220,
+      withTiming(1, {
+        duration: 450,
+        easing: Easing.out(Easing.ease),
+        reduceMotion: ReduceMotion.System,
+      })
     );
   }, []);
 
-  // Phase 5: Smooth exit transition when initialization completes
+  // Phase 5: Handoff completion when isReady becomes true
   useEffect(() => {
     if (isReady) {
-      // Ensure a minimum peaceful display time (~850ms) for visual harmony
+      // Ensure the user gets to see the complete peaceful loading animation (~1850ms)
       const timer = setTimeout(() => {
         containerOpacity.value = withTiming(
           0,
           {
-            duration: 450,
+            duration: 400,
             easing: Easing.out(Easing.ease),
             reduceMotion: ReduceMotion.System,
           },
-          (finished) => {
-            if (finished) {
+          (fadeFinished) => {
+            if (fadeFinished) {
               runOnJS(onAnimationComplete)();
             }
           }
         );
-      }, 850);
+      }, 1850);
 
       return () => clearTimeout(timer);
     }
@@ -146,27 +326,37 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
     opacity: bgOpacity.value,
   }));
 
-  const logoAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: logoOpacity.value,
-    transform: [{ scale: logoScale.value }],
+  const medallionAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: medallionOpacity.value,
+    transform: [{ scale: medallionScale.value }],
   }));
 
-  const contentAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: contentOpacity.value,
-    transform: [{ translateY: contentTranslateY.value }],
+  const titlesAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: titlesOpacity.value,
+    transform: [{ translateY: titlesTranslateY.value }],
   }));
 
-  const progressBarAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: progressTranslateX.value }],
+  const progressFillAnimatedStyle = useAnimatedStyle(() => ({
+    width: progressPercent.value * PROGRESS_TRACK_WIDTH,
+  }));
+
+  const loadingAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: loadingTextOpacity.value,
   }));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: containerOpacity.value,
   }));
 
+  // Synchronized proportional positions relative to the background artwork
+  // Medallion top: ~27% of artwork height (centered between hanging lanterns)
+  // Loading section bottom: ~8% of artwork height (in front of bottom mosque entrance)
+  const brandSectionTop = bgHeight * 0.27;
+  const loadingSectionBottom = bgHeight * 0.082;
+
   return (
     <Animated.View style={[styles.container, containerAnimatedStyle]}>
-      {/* Background Container holding the original portrait artwork */}
+      {/* Background container holding the original artwork with strict containment */}
       <Animated.View style={[styles.bgContainer, bgAnimatedStyle]} pointerEvents="none">
         <Image
           source={require('../../assets/loading.png')}
@@ -176,35 +366,75 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
           }}
           resizeMode="contain"
         />
-      </Animated.View>
 
-      {/* Central Content: Logo + Branding + Loading Indicator */}
-      <View style={styles.centerContent} pointerEvents="none">
-        {/* Original Noor-ul-Quran Logo */}
-        <Animated.View style={[styles.logoWrapper, logoAnimatedStyle]}>
-          <View style={styles.logoHalo}>
-            <View style={styles.logoContainer}>
-              <Image
-                source={require('../../assets/logo/logo_app.png')}
-                style={styles.logoImage}
-                resizeMode="contain"
-              />
+        {/* Content container aligned with the exact bounds of the artwork */}
+        <View
+          style={[
+            StyleSheet.absoluteFillObject,
+            { width: bgWidth, height: bgHeight },
+          ]}
+          pointerEvents="none"
+        >
+          {/* Upper-Middle Brand Section (Medallion + Quran Calligraphy + Titles) */}
+          <View
+            style={[styles.brandSection, { top: brandSectionTop }]}
+            pointerEvents="none"
+          >
+            {/* Ornate Gold Islamic Rosette Medallion with Original Logo */}
+            <Animated.View style={[styles.medallionWrapper, medallionAnimatedStyle]}>
+              <RosetteMedallion size={156} />
+              <View style={styles.logoBadgeContainer}>
+                <Image
+                  source={require('../../assets/logo/logo_app.png')}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+              </View>
+            </Animated.View>
+
+            {/* Application Branding matching exact reference */}
+            <Animated.View style={[styles.titlesContainer, titlesAnimatedStyle]}>
+              <Text style={styles.arabicTitle}>القرآن الكريم</Text>
+
+              {/* Upper Gold Ornament Divider */}
+              <GoldDivider />
+
+              {/* App English Title */}
+              <Text style={styles.englishTitle}>NOOR-UL-QURAN</Text>
+
+              {/* Lower Gold Ornament Divider */}
+              <GoldDivider />
+
+              {/* Bismillah Calligraphy */}
+              <Text style={styles.bismillahText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
+            </Animated.View>
+          </View>
+
+          {/* Lower Loading Section (Capsule Progress Bar + LOADING...) */}
+          <Animated.View
+            style={[
+              styles.loadingSection,
+              { bottom: loadingSectionBottom },
+              loadingAnimatedStyle,
+            ]}
+            pointerEvents="none"
+          >
+            {/* 3D Capsule-style Progress Bar */}
+            <View style={styles.progressCapsuleTrack}>
+              <Animated.View style={[styles.progressCapsuleFill, progressFillAnimatedStyle]}>
+                <View style={styles.progressHighlight} />
+              </Animated.View>
             </View>
-          </View>
-        </Animated.View>
 
-        {/* Application Branding */}
-        <Animated.View style={[styles.titlesContainer, contentAnimatedStyle]}>
-          <Text style={styles.arabicTitle}>القرآن الكريم</Text>
-          <Text style={styles.englishTitle}>NOOR-UL-QURAN</Text>
-          <Text style={styles.bismillahText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
-
-          {/* Antique-Gold Loading Indicator */}
-          <View style={styles.loadingTrack}>
-            <Animated.View style={[styles.loadingBar, progressBarAnimatedStyle]} />
-          </View>
-        </Animated.View>
-      </View>
+            {/* ─── LOADING... ─── */}
+            <View style={styles.loadingTextRow}>
+              <View style={styles.loadingLine} />
+              <Text style={styles.loadingText}>L O A D I N G . . .</Text>
+              <View style={styles.loadingLine} />
+            </View>
+          </Animated.View>
+        </View>
+      </Animated.View>
     </Animated.View>
   );
 };
@@ -212,7 +442,7 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#F6F3EC', // Warm Ivory & Cream
+    backgroundColor: '#F6F3EC', // Warm Ivory
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 9999,
@@ -223,85 +453,137 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  centerContent: {
+  brandSection: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
     alignItems: 'center',
-    justifyContent: 'center',
     zIndex: 2,
-    paddingHorizontal: 24,
   },
-  logoWrapper: {
-    marginBottom: 16,
-  },
-  logoHalo: {
-    padding: 6,
-    borderRadius: 56,
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    shadowColor: '#053E27',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 4,
-  },
-  logoContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderWidth: 1.5,
-    borderColor: 'rgba(13, 102, 70, 0.28)',
+  medallionWrapper: {
+    width: 156,
+    height: 156,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
+    marginBottom: 6,
+    shadowColor: '#C5A059',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  logoBadgeContainer: {
+    position: 'absolute',
+    width: 90,
+    height: 90,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logoImage: {
-    width: 76,
-    height: 76,
+    width: 78,
+    height: 78,
   },
   titlesContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
   },
   arabicTitle: {
-    fontSize: 38,
-    lineHeight: 58,
-    color: '#053E27',
-    fontFamily: typography.fontFamily.amiri,
+    fontSize: 35,
+    lineHeight: 48,
+    color: '#064E3B', // Rich Islamic Emerald Green
+    fontFamily: typography.fontFamily.scheherazade,
     textAlign: 'center',
-    paddingVertical: 2,
-    textShadowColor: 'rgba(255, 255, 255, 0.92)',
+    marginBottom: 2,
+    textShadowColor: 'rgba(255, 255, 255, 0.90)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 6,
+    textShadowRadius: 4,
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 3,
+  },
+  dividerLine: {
+    width: 76,
+    height: 1,
+    backgroundColor: '#C5A059', // Antique Gold
+    opacity: 0.85,
+  },
+  dividerStar: {
+    marginHorizontal: 8,
   },
   englishTitle: {
-    fontSize: 12.5,
+    fontSize: 14,
     fontWeight: '800',
-    color: '#0D6646',
+    color: '#064E3B',
     letterSpacing: 4.5,
-    marginTop: 2,
     textAlign: 'center',
+    marginVertical: 2,
   },
   bismillahText: {
-    fontSize: 18,
-    lineHeight: 32,
-    color: '#2D5E4E',
-    fontFamily: typography.fontFamily.amiri,
-    marginTop: 8,
-    paddingVertical: 2,
+    fontSize: 18.5,
+    lineHeight: 30,
+    color: '#064E3B',
+    fontFamily: typography.fontFamily.scheherazade,
+    marginTop: 6,
     textAlign: 'center',
   },
-  loadingTrack: {
-    width: TRACK_WIDTH,
-    height: 3.5,
-    backgroundColor: 'rgba(212, 175, 55, 0.22)', // Antique Gold Track
-    borderRadius: 2,
-    overflow: 'hidden',
-    marginTop: 24,
+  loadingSection: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 2,
   },
-  loadingBar: {
-    width: BAR_WIDTH,
+  progressCapsuleTrack: {
+    width: PROGRESS_TRACK_WIDTH,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: '#063A2A', // Deep Dark Emerald Green
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.55)', // Antique Gold Border
+    overflow: 'hidden',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.22,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  progressCapsuleFill: {
     height: '100%',
-    backgroundColor: '#C5A059', // Rich Antique Gold
-    borderRadius: 2,
+    borderRadius: 6,
+    backgroundColor: '#E5B842', // Luminous Gold
+    position: 'relative',
+  },
+  progressHighlight: {
+    position: 'absolute',
+    top: 1,
+    left: 2,
+    right: 2,
+    height: 2.2,
+    borderRadius: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.50)', // 3D cylindrical reflection
+  },
+  loadingTextRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  loadingLine: {
+    width: 34,
+    height: 1,
+    backgroundColor: '#C5A059',
+    opacity: 0.75,
+  },
+  loadingText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#A68038', // Antique Warm Gold
+    letterSpacing: 3.5,
+    marginHorizontal: 10,
   },
 });

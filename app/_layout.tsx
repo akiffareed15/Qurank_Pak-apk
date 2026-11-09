@@ -14,7 +14,8 @@ import { useLastReadStore } from '../src/store/lastReadStore';
 import { useBookmarksStore } from '../src/store/bookmarksStore';
 import { AppSplashScreen } from '../src/components/AppSplashScreen';
 
-SplashScreen.preventAutoHideAsync();
+// Native splash screen auto-hides as soon as React Native mounts,
+// allowing AppSplashScreen to handle the unified, single startup animation seamlessly.
 
 function RootNavigator() {
   const { colors } = useTheme();
