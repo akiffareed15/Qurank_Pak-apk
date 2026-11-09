@@ -1,6 +1,6 @@
 // app/settings.tsx
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -10,16 +10,171 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../src/theme/ThemeProvider';
 import { typography } from '../src/theme/typography';
 import { useSettingsStore } from '../src/store/settingsStore';
-import type { ThemeMode, ReadingMode } from '../src/types/quran';
+import type { ThemeMode } from '../src/types/quran';
 
 const PREVIEW_BISMILLAH = 'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ';
 const PREVIEW_TRANSLATION =
   'In the name of Allah, the Entirely Merciful, the Especially Merciful.';
+
+// Discrete Kindle/Safari style steps (7 steps each, with defaults in the middle)
+const ARABIC_STEPS = [20, 24, 28, 32, 36, 40, 44];
+const TRANSLATION_STEPS = [12, 14, 16, 18, 20, 22, 26];
+
+function getClosestStepIndex(value: number, steps: number[]): number {
+  let closestIdx = 0;
+  let minDiff = Math.abs(steps[0] - value);
+  for (let i = 1; i < steps.length; i++) {
+    const diff = Math.abs(steps[i] - value);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestIdx = i;
+    }
+  }
+  return closestIdx;
+}
+
+interface StepControlProps {
+  label: string;
+  value: number;
+  steps: number[];
+  onChange: (value: number) => void;
+  colors: ReturnType<typeof useTheme>['colors'];
+}
+
+function StepControl({ label, value, steps, onChange, colors }: StepControlProps) {
+  const currentIndex = getClosestStepIndex(value, steps);
+  const isMin = currentIndex === 0;
+  const isMax = currentIndex === steps.length - 1;
+
+  const handlePrev = () => {
+    if (!isMin) {
+      onChange(steps[currentIndex - 1]);
+    }
+  };
+
+  const handleNext = () => {
+    if (!isMax) {
+      onChange(steps[currentIndex + 1]);
+    }
+  };
+
+  return (
+    <View
+      style={[
+        styles.settingGroup,
+        { backgroundColor: colors.card, borderColor: colors.border },
+      ]}
+    >
+      <View style={styles.groupHeader}>
+        <Text style={[styles.groupLabel, { color: colors.text }]}>{label}</Text>
+        <Text style={[styles.valueLabel, { color: colors.primary }]}>
+          {steps[currentIndex]} pt
+        </Text>
+      </View>
+
+      <View style={styles.stepControlRow}>
+        {/* A- Button */}
+        <Pressable
+          onPress={handlePrev}
+          disabled={isMin}
+          style={({ pressed }) => [
+            styles.stepActionButton,
+            {
+              backgroundColor: colors.background,
+              borderColor: colors.border,
+              opacity: isMin ? 0.35 : pressed ? 0.7 : 1,
+              transform: [{ scale: pressed && !isMin ? 0.94 : 1 }],
+            },
+          ]}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={`Decrease ${label}`}
+        >
+          <Text style={[styles.stepActionTextSmall, { color: colors.text }]}>A-</Text>
+        </Pressable>
+
+        {/* Step Track & Dots */}
+        <View style={styles.dotsTrackContainer}>
+          {/* Continuous Connecting Line */}
+          <View
+            style={[
+              styles.dotsConnectingLine,
+              { backgroundColor: colors.border },
+            ]}
+          />
+
+          {/* Dots */}
+          <View style={styles.dotsRow}>
+            {steps.map((step, index) => {
+              const isSelected = index === currentIndex;
+              return (
+                <Pressable
+                  key={step}
+                  onPress={() => onChange(step)}
+                  hitSlop={10}
+                  style={styles.dotTouchTarget}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${label} ${step} pt`}
+                >
+                  {isSelected ? (
+                    <View
+                      style={[
+                        styles.activeDotOuter,
+                        {
+                          backgroundColor: colors.primary,
+                        },
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.activeDotInner,
+                          { backgroundColor: colors.onPrimary },
+                        ]}
+                      />
+                    </View>
+                  ) : (
+                    <View
+                      style={[
+                        styles.inactiveDot,
+                        {
+                          backgroundColor: colors.border,
+                        },
+                      ]}
+                    />
+                  )}
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* A+ Button */}
+        <Pressable
+          onPress={handleNext}
+          disabled={isMax}
+          style={({ pressed }) => [
+            styles.stepActionButton,
+            {
+              backgroundColor: colors.background,
+              borderColor: colors.border,
+              opacity: isMax ? 0.35 : pressed ? 0.7 : 1,
+              transform: [{ scale: pressed && !isMax ? 0.94 : 1 }],
+            },
+          ]}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={`Increase ${label}`}
+        >
+          <Text style={[styles.stepActionTextLarge, { color: colors.text }]}>A+</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -31,31 +186,12 @@ export default function SettingsScreen() {
     translationSize,
     setArabicSize,
     setTranslationSize,
-    readingMode,
-    setReadingMode,
   } = useSettingsStore();
-
-  // Local state for smooth 60fps dragging without layout shifts or disk lag
-  const [localArabicSize, setLocalArabicSize] = useState(arabicSize);
-  const [localTranslationSize, setLocalTranslationSize] = useState(translationSize);
-
-  useEffect(() => {
-    setLocalArabicSize(arabicSize);
-  }, [arabicSize]);
-
-  useEffect(() => {
-    setLocalTranslationSize(translationSize);
-  }, [translationSize]);
 
   const themeOptions: { mode: ThemeMode; icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
     { mode: 'light', icon: 'sunny-outline', label: 'Light' },
     { mode: 'dark', icon: 'moon-outline', label: 'Dark' },
     { mode: 'system', icon: 'phone-portrait-outline', label: 'System' },
-  ];
-
-  const readingOptions: { mode: ReadingMode; icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
-    { mode: 'mushaf', icon: 'book-outline', label: 'Mushaf (604 Pages)' },
-    { mode: 'list', icon: 'language-outline', label: 'Translation' },
   ];
 
   return (
@@ -124,7 +260,7 @@ export default function SettingsScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Live Preview Card with Fixed/Stable Height to Prevent Layout Jitter */}
+        {/* Live Preview Card with Fixed/Stable Dimensions to Eliminate Any Layout Jitter */}
         <View
           style={[
             styles.previewCard,
@@ -134,230 +270,61 @@ export default function SettingsScreen() {
             },
           ]}
         >
-          <Text
-            style={[
-              styles.previewArabic,
-              {
-                fontSize: localArabicSize,
-                lineHeight: Math.round(localArabicSize * 1.95),
-                color: colors.text,
-                fontFamily: typography.fontFamily.quran,
-              },
-            ]}
-          >
-            {PREVIEW_BISMILLAH}
-          </Text>
-          <Text
-            style={[
-              styles.previewTranslation,
-              {
-                fontSize: localTranslationSize,
-                lineHeight: Math.round(localTranslationSize * 1.55),
-                color: colors.textMuted,
-              },
-            ]}
-          >
-            {PREVIEW_TRANSLATION}
-          </Text>
-        </View>
+          {/* Dedicated Arabic Zone (Independent centering, zero impact on Translation) */}
+          <View style={styles.previewArabicContainer}>
+            <Text
+              style={[
+                styles.previewArabic,
+                {
+                  fontSize: arabicSize,
+                  lineHeight: Math.round(arabicSize * 1.85),
+                  color: colors.text,
+                  fontFamily: typography.fontFamily.quran,
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {PREVIEW_BISMILLAH}
+            </Text>
+          </View>
 
-        {/* Section: Reading Mode */}
-        <View
-          style={[
-            styles.settingGroup,
-            { backgroundColor: colors.card, borderColor: colors.border },
-          ]}
-        >
-          <Text style={[styles.groupLabel, { color: colors.text, marginBottom: 12 }]}>
-            Reading Mode
-          </Text>
-          <View style={styles.segmentContainer}>
-            {readingOptions.map((opt) => {
-              const isSelected = readingMode === opt.mode;
-              return (
-                <Pressable
-                  key={opt.mode}
-                  onPress={() => setReadingMode(opt.mode)}
-                  style={[
-                    styles.segmentOption,
-                    {
-                      backgroundColor: isSelected
-                        ? colors.primary
-                        : colors.background,
-                      borderColor: isSelected ? colors.primary : colors.border,
-                    },
-                  ]}
-                >
-                  <Ionicons
-                    name={opt.icon}
-                    size={18}
-                    color={isSelected ? colors.onPrimary : colors.textMuted}
-                  />
-                  <Text
-                    style={[
-                      styles.segmentLabel,
-                      {
-                        color: isSelected ? colors.onPrimary : colors.textMuted,
-                      },
-                    ]}
-                  >
-                    {opt.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
+          {/* Hairline Divider Anchoring Both Zones */}
+          <View style={[styles.previewDivider, { backgroundColor: colors.border }]} />
+
+          {/* Dedicated Translation Zone (Independent centering, zero impact on Arabic) */}
+          <View style={styles.previewTranslationContainer}>
+            <Text
+              style={[
+                styles.previewTranslation,
+                {
+                  fontSize: translationSize,
+                  lineHeight: Math.round(translationSize * 1.45),
+                  color: colors.textMuted,
+                },
+              ]}
+            >
+              {PREVIEW_TRANSLATION}
+            </Text>
           </View>
         </View>
 
-        {/* Section: Arabic Size */}
-        <View
-          style={[
-            styles.settingGroup,
-            { backgroundColor: colors.card, borderColor: colors.border },
-          ]}
-        >
-          <View style={styles.groupHeader}>
-            <Text style={[styles.groupLabel, { color: colors.text }]}>
-              Arabic Text Size
-            </Text>
-            <Text style={[styles.valueLabel, { color: colors.primary }]}>
-              {Math.round(localArabicSize)}
-            </Text>
-          </View>
-          <View style={styles.sliderRow}>
-            <Pressable
-              onPress={() => {
-                const next = Math.max(typography.limits.arabicMin, Math.round(localArabicSize) - 1);
-                setLocalArabicSize(next);
-                setArabicSize(next);
-              }}
-              style={({ pressed }) => [
-                styles.stepBtn,
-                {
-                  backgroundColor: colors.background,
-                  borderColor: colors.border,
-                  opacity: pressed ? 0.65 : 1,
-                },
-              ]}
-              hitSlop={8}
-              accessibilityLabel="Decrease Arabic size"
-            >
-              <Ionicons name="remove" size={18} color={colors.text} />
-            </Pressable>
+        {/* Section: Arabic Size (Discrete Kindle / Safari Steps) */}
+        <StepControl
+          label="Arabic Text Size"
+          value={arabicSize}
+          steps={ARABIC_STEPS}
+          onChange={setArabicSize}
+          colors={colors}
+        />
 
-            <Slider
-              style={styles.slider}
-              minimumValue={typography.limits.arabicMin}
-              maximumValue={typography.limits.arabicMax}
-              step={1}
-              value={localArabicSize}
-              onValueChange={(val) => setLocalArabicSize(Math.round(val))}
-              onSlidingComplete={(val) => {
-                const rounded = Math.round(val);
-                setLocalArabicSize(rounded);
-                setArabicSize(rounded);
-              }}
-              minimumTrackTintColor={colors.primary}
-              maximumTrackTintColor={colors.border}
-              thumbTintColor={colors.primary}
-            />
-
-            <Pressable
-              onPress={() => {
-                const next = Math.min(typography.limits.arabicMax, Math.round(localArabicSize) + 1);
-                setLocalArabicSize(next);
-                setArabicSize(next);
-              }}
-              style={({ pressed }) => [
-                styles.stepBtn,
-                {
-                  backgroundColor: colors.background,
-                  borderColor: colors.border,
-                  opacity: pressed ? 0.65 : 1,
-                },
-              ]}
-              hitSlop={8}
-              accessibilityLabel="Increase Arabic size"
-            >
-              <Ionicons name="add" size={18} color={colors.text} />
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Section: Translation Size */}
-        <View
-          style={[
-            styles.settingGroup,
-            { backgroundColor: colors.card, borderColor: colors.border },
-          ]}
-        >
-          <View style={styles.groupHeader}>
-            <Text style={[styles.groupLabel, { color: colors.text }]}>
-              Translation Size
-            </Text>
-            <Text style={[styles.valueLabel, { color: colors.primary }]}>
-              {Math.round(localTranslationSize)}
-            </Text>
-          </View>
-          <View style={styles.sliderRow}>
-            <Pressable
-              onPress={() => {
-                const next = Math.max(typography.limits.translationMin, Math.round(localTranslationSize) - 1);
-                setLocalTranslationSize(next);
-                setTranslationSize(next);
-              }}
-              style={({ pressed }) => [
-                styles.stepBtn,
-                {
-                  backgroundColor: colors.background,
-                  borderColor: colors.border,
-                  opacity: pressed ? 0.65 : 1,
-                },
-              ]}
-              hitSlop={8}
-              accessibilityLabel="Decrease Translation size"
-            >
-              <Ionicons name="remove" size={18} color={colors.text} />
-            </Pressable>
-
-            <Slider
-              style={styles.slider}
-              minimumValue={typography.limits.translationMin}
-              maximumValue={typography.limits.translationMax}
-              step={1}
-              value={localTranslationSize}
-              onValueChange={(val) => setLocalTranslationSize(Math.round(val))}
-              onSlidingComplete={(val) => {
-                const rounded = Math.round(val);
-                setLocalTranslationSize(rounded);
-                setTranslationSize(rounded);
-              }}
-              minimumTrackTintColor={colors.primary}
-              maximumTrackTintColor={colors.border}
-              thumbTintColor={colors.primary}
-            />
-
-            <Pressable
-              onPress={() => {
-                const next = Math.min(typography.limits.translationMax, Math.round(localTranslationSize) + 1);
-                setLocalTranslationSize(next);
-                setTranslationSize(next);
-              }}
-              style={({ pressed }) => [
-                styles.stepBtn,
-                {
-                  backgroundColor: colors.background,
-                  borderColor: colors.border,
-                  opacity: pressed ? 0.65 : 1,
-                },
-              ]}
-              hitSlop={8}
-              accessibilityLabel="Increase Translation size"
-            >
-              <Ionicons name="add" size={18} color={colors.text} />
-            </Pressable>
-          </View>
-        </View>
+        {/* Section: Translation Size (Discrete Kindle / Safari Steps) */}
+        <StepControl
+          label="Translation Size"
+          value={translationSize}
+          steps={TRANSLATION_STEPS}
+          onChange={setTranslationSize}
+          colors={colors}
+        />
 
         {/* Section: Theme */}
         <View
@@ -453,18 +420,40 @@ const styles = StyleSheet.create({
   previewCard: {
     borderRadius: 20,
     borderWidth: 1,
-    padding: 18,
-    minHeight: 180,
-    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    height: 200,
+    justifyContent: 'space-between',
     marginBottom: 18,
+    overflow: 'hidden',
+  },
+  previewArabicContainer: {
+    flex: 1.15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   previewArabic: {
     textAlign: 'center',
     writingDirection: 'rtl',
+    includeFontPadding: false,
+    paddingVertical: 2,
+  },
+  previewDivider: {
+    height: StyleSheet.hairlineWidth,
+    width: '80%',
+    alignSelf: 'center',
+    marginVertical: 4,
+    opacity: 0.5,
+  },
+  previewTranslationContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   previewTranslation: {
     textAlign: 'center',
-    marginTop: 10,
+    includeFontPadding: false,
+    paddingVertical: 2,
   },
   settingGroup: {
     borderRadius: 18,
@@ -476,34 +465,85 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 14,
   },
   groupLabel: {
     fontSize: 15,
     fontWeight: '500',
   },
   valueLabel: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
   },
-  sliderRow: {
+  stepControlRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    gap: 10,
   },
-  stepBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+  stepActionButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  slider: {
+  stepActionTextSmall: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  stepActionTextLarge: {
+    fontSize: 17,
+    fontWeight: '800',
+  },
+  dotsTrackContainer: {
     flex: 1,
-    height: 40,
+    height: 42,
+    justifyContent: 'center',
+    marginHorizontal: 12,
+    position: 'relative',
+  },
+  dotsConnectingLine: {
+    position: 'absolute',
+    left: 12,
+    right: 12,
+    height: 2,
+    borderRadius: 1,
+  },
+  dotsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  dotTouchTarget: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activeDotOuter: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  activeDotInner: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  inactiveDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   segmentContainer: {
     flexDirection: 'row',
