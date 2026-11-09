@@ -102,7 +102,7 @@ export default function HomeScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#061610' : '#F6F3EC' }]}>
-      {/* Full-Screen Islamic Background Image (Zero Crop, Zero Zoom, Precise Fit) */}
+      {/* Full-Bleed Edge-to-Edge Islamic Background Artwork (Zero Gaps, Zero Letterboxing) */}
       <View
         style={[
           styles.bgContainer,
@@ -113,11 +113,8 @@ export default function HomeScreen() {
         <Image
           key={isDark ? 'dark-bg' : 'light-bg'}
           source={bgImage}
-          style={{
-            width: bgWidth,
-            height: bgHeight,
-          }}
-          resizeMode="contain"
+          style={{ width: windowWidth, height: windowHeight }}
+          resizeMode="cover"
         />
       </View>
 

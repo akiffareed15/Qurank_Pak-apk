@@ -1,6 +1,6 @@
 // src/components/AppSplashScreen.tsx
 // Premium, Peaceful Light-Theme Startup Loading Animation for Noor-ul-Quran
-// Pixel-accurate implementation matching user's Islamic architectural reference artwork
+// Full-Bleed Edge-to-Edge Islamic architectural artwork with enhanced typography
 
 import React, { useEffect } from 'react';
 import {
@@ -30,11 +30,6 @@ import Svg, {
 } from 'react-native-svg';
 import { typography } from '../theme/typography';
 
-// Dimensions of the original portrait artwork (841 x 1870)
-const ORIGINAL_IMAGE_WIDTH = 841;
-const ORIGINAL_IMAGE_HEIGHT = 1870;
-const IMAGE_ASPECT_RATIO = ORIGINAL_IMAGE_WIDTH / ORIGINAL_IMAGE_HEIGHT;
-
 const PROGRESS_TRACK_WIDTH = 236;
 
 interface AppSplashScreenProps {
@@ -45,7 +40,7 @@ interface AppSplashScreenProps {
 /**
  * Islamic Shamsa Rosette Medallion
  * 16-lobed gold filigree mandala with concentric beaded rings
- * and pristine white circular badge frame matching the reference artwork.
+ * and pristine white circular badge frame.
  */
 const RosetteMedallion: React.FC<{ size: number }> = ({ size }) => {
   const cx = 100;
@@ -172,7 +167,7 @@ const RosetteMedallion: React.FC<{ size: number }> = ({ size }) => {
 const GoldDivider: React.FC = () => (
   <View style={styles.dividerRow}>
     <View style={styles.dividerLine} />
-    <Svg width={16} height={16} viewBox="0 0 24 24" style={styles.dividerStar}>
+    <Svg width={18} height={18} viewBox="0 0 24 24" style={styles.dividerStar}>
       <Defs>
         <LinearGradient id="starGold" x1="0%" y1="0%" x2="100%" y2="100%">
           <Stop offset="0%" stopColor="#FDE68A" />
@@ -209,20 +204,6 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
   isReady,
 }) => {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-
-  // Strict aspect-ratio containment:
-  // Preserves 100% of the artwork (both hanging lanterns, top arch, middle sky, and full bottom mosque)
-  let bgWidth = windowWidth;
-  let bgHeight = windowHeight;
-
-  const windowAspectRatio = windowWidth / windowHeight;
-  if (windowAspectRatio < IMAGE_ASPECT_RATIO) {
-    bgWidth = windowWidth;
-    bgHeight = windowWidth / IMAGE_ASPECT_RATIO;
-  } else {
-    bgHeight = windowHeight;
-    bgWidth = windowHeight * IMAGE_ASPECT_RATIO;
-  }
 
   // Animation values
   const bgOpacity = useSharedValue(0);
@@ -348,91 +329,79 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
     opacity: containerOpacity.value,
   }));
 
-  // Synchronized proportional positions relative to the background artwork
-  // Medallion top: ~27% of artwork height (centered between hanging lanterns)
-  // Loading section bottom: ~8% of artwork height (in front of bottom mosque entrance)
-  const brandSectionTop = bgHeight * 0.27;
-  const loadingSectionBottom = bgHeight * 0.082;
+  // Full-bleed proportional placement:
+  // Medallion top: ~25% of screen height (centered between hanging lanterns)
+  // Loading section bottom: ~8% of screen height (in front of bottom mosque entrance)
+  const brandSectionTop = Math.max(windowHeight * 0.25, 170);
+  const loadingSectionBottom = Math.max(windowHeight * 0.08, 56);
 
   return (
     <Animated.View style={[styles.container, containerAnimatedStyle]}>
-      {/* Background container holding the original artwork with strict containment */}
-      <Animated.View style={[styles.bgContainer, bgAnimatedStyle]} pointerEvents="none">
+      {/* Full-Bleed Edge-to-Edge Background Artwork (Zero Gaps, Zero Letterboxing) */}
+      <Animated.View style={[StyleSheet.absoluteFillObject, bgAnimatedStyle]} pointerEvents="none">
         <Image
           source={require('../../assets/loading.png')}
-          style={{
-            width: bgWidth,
-            height: bgHeight,
-          }}
-          resizeMode="contain"
+          style={{ width: windowWidth, height: windowHeight }}
+          resizeMode="stretch"
         />
+      </Animated.View>
 
-        {/* Content container aligned with the exact bounds of the artwork */}
-        <View
-          style={[
-            StyleSheet.absoluteFillObject,
-            { width: bgWidth, height: bgHeight },
-          ]}
-          pointerEvents="none"
-        >
-          {/* Upper-Middle Brand Section (Medallion + Quran Calligraphy + Titles) */}
-          <View
-            style={[styles.brandSection, { top: brandSectionTop }]}
-            pointerEvents="none"
-          >
-            {/* Ornate Gold Islamic Rosette Medallion with Original Logo */}
-            <Animated.View style={[styles.medallionWrapper, medallionAnimatedStyle]}>
-              <RosetteMedallion size={156} />
-              <View style={styles.logoBadgeContainer}>
-                <Image
-                  source={require('../../assets/logo/logo_app.png')}
-                  style={styles.logoImage}
-                  resizeMode="contain"
-                />
-              </View>
-            </Animated.View>
-
-            {/* Application Branding matching exact reference */}
-            <Animated.View style={[styles.titlesContainer, titlesAnimatedStyle]}>
-              <Text style={styles.arabicTitle}>القرآن الكريم</Text>
-
-              {/* Upper Gold Ornament Divider */}
-              <GoldDivider />
-
-              {/* App English Title */}
-              <Text style={styles.englishTitle}>NOOR-UL-QURAN</Text>
-
-              {/* Lower Gold Ornament Divider */}
-              <GoldDivider />
-
-              {/* Bismillah Calligraphy */}
-              <Text style={styles.bismillahText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
-            </Animated.View>
+      {/* Upper-Middle Brand Section (Enlarged Medallion + Enhanced Typography) */}
+      <View
+        style={[styles.brandSection, { top: brandSectionTop }]}
+        pointerEvents="none"
+      >
+        {/* Prominent Golden Islamic Rosette Medallion with Original Logo */}
+        <Animated.View style={[styles.medallionWrapper, medallionAnimatedStyle]}>
+          <RosetteMedallion size={184} />
+          <View style={styles.logoBadgeContainer}>
+            <Image
+              source={require('../../assets/logo/logo_app.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
           </View>
+        </Animated.View>
 
-          {/* Lower Loading Section (Capsule Progress Bar + LOADING...) */}
-          <Animated.View
-            style={[
-              styles.loadingSection,
-              { bottom: loadingSectionBottom },
-              loadingAnimatedStyle,
-            ]}
-            pointerEvents="none"
-          >
-            {/* 3D Capsule-style Progress Bar */}
-            <View style={styles.progressCapsuleTrack}>
-              <Animated.View style={[styles.progressCapsuleFill, progressFillAnimatedStyle]}>
-                <View style={styles.progressHighlight} />
-              </Animated.View>
-            </View>
+        {/* Application Branding with enhanced, grand sizes */}
+        <Animated.View style={[styles.titlesContainer, titlesAnimatedStyle]}>
+          <Text style={styles.arabicTitle}>القرآن الكريم</Text>
 
-            {/* ─── LOADING... ─── */}
-            <View style={styles.loadingTextRow}>
-              <View style={styles.loadingLine} />
-              <Text style={styles.loadingText}>L O A D I N G . . .</Text>
-              <View style={styles.loadingLine} />
-            </View>
+          {/* Upper Gold Ornament Divider */}
+          <GoldDivider />
+
+          {/* App English Title */}
+          <Text style={styles.englishTitle}>NOOR-UL-QURAN</Text>
+
+          {/* Lower Gold Ornament Divider */}
+          <GoldDivider />
+
+          {/* Bismillah Calligraphy */}
+          <Text style={styles.bismillahText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
+        </Animated.View>
+      </View>
+
+      {/* Lower Loading Section (Preserved Original Capsule Bar + "LOADING...") */}
+      <Animated.View
+        style={[
+          styles.loadingSection,
+          { bottom: loadingSectionBottom },
+          loadingAnimatedStyle,
+        ]}
+        pointerEvents="none"
+      >
+        {/* 3D Capsule-style Progress Bar (Original Dimensions Preserved) */}
+        <View style={styles.progressCapsuleTrack}>
+          <Animated.View style={[styles.progressCapsuleFill, progressFillAnimatedStyle]}>
+            <View style={styles.progressHighlight} />
           </Animated.View>
+        </View>
+
+        {/* ─── LOADING... ─── (Original Dimensions Preserved) */}
+        <View style={styles.loadingTextRow}>
+          <View style={styles.loadingLine} />
+          <Text style={styles.loadingText}>L O A D I N G . . .</Text>
+          <View style={styles.loadingLine} />
         </View>
       </Animated.View>
     </Animated.View>
@@ -443,15 +412,7 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: '#F6F3EC', // Warm Ivory
-    alignItems: 'center',
-    justifyContent: 'center',
     zIndex: 9999,
-  },
-  bgContainer: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
   },
   brandSection: {
     position: 'absolute',
@@ -461,27 +422,27 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   medallionWrapper: {
-    width: 156,
-    height: 156,
+    width: 184,
+    height: 184,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
     shadowColor: '#C5A059',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.28,
     shadowRadius: 10,
     elevation: 6,
   },
   logoBadgeContainer: {
     position: 'absolute',
-    width: 90,
-    height: 90,
+    width: 106,
+    height: 106,
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoImage: {
-    width: 78,
-    height: 78,
+    width: 92,
+    height: 92,
   },
   titlesContainer: {
     alignItems: 'center',
@@ -489,8 +450,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   arabicTitle: {
-    fontSize: 35,
-    lineHeight: 48,
+    fontSize: 42,
+    lineHeight: 56,
     color: '#064E3B', // Rich Islamic Emerald Green
     fontFamily: typography.fontFamily.scheherazade,
     textAlign: 'center',
@@ -503,10 +464,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 3,
+    marginVertical: 4,
   },
   dividerLine: {
-    width: 76,
+    width: 86,
     height: 1,
     backgroundColor: '#C5A059', // Antique Gold
     opacity: 0.85,
@@ -515,16 +476,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   englishTitle: {
-    fontSize: 14,
+    fontSize: 16.5,
     fontWeight: '800',
     color: '#064E3B',
-    letterSpacing: 4.5,
+    letterSpacing: 5.5,
     textAlign: 'center',
     marginVertical: 2,
   },
   bismillahText: {
-    fontSize: 18.5,
-    lineHeight: 30,
+    fontSize: 22,
+    lineHeight: 34,
     color: '#064E3B',
     fontFamily: typography.fontFamily.scheherazade,
     marginTop: 6,
