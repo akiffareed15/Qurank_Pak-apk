@@ -334,9 +334,9 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
   }));
 
   // Full-bleed proportional placement:
-  // Medallion top: ~24.5% of total screen height (centered between hanging lanterns)
+  // Medallion top: ~22.4% of total screen height (centered between hanging lanterns)
   // Loading section bottom: lifted to ~12% (clearly above the dark green arch)
-  const brandSectionTop = Math.max(screenHeight * 0.245, 175);
+  const brandSectionTop = Math.max(screenHeight * 0.224, 166);
   const loadingSectionBottom = Math.max(screenHeight * 0.12, 94);
 
   return (
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     height: 184,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 6,
+    marginBottom: 24, // Generous breathing space preventing bottom golden ray from touching Arabic calligraphy
     shadowColor: '#C5A059',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.28,
