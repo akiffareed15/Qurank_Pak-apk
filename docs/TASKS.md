@@ -4,7 +4,7 @@
 - [x] Message Technical Lead: confirm React Native (Expo) + translation choice and its commercial licence
 - [x] Download the 3 Tanzil files into `tools/source/`
 - [x] Download a Quran font (.ttf) and check its licence (`AmiriQuran-Regular.ttf` SIL OFL 1.1)
-- [ ] Create Git repo, first commit with these docs
+- [x] Create Git repo, first commit with these docs
 - [ ] Finish Stitch designs; export screenshots into `docs/design/` (Home, Surah list, Reader, Bookmarks, Settings; light + dark)
 
 ## Day 1 — Saturday 7 Nov: foundation + reading
