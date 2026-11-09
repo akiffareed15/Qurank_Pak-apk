@@ -1,6 +1,6 @@
 // app/bookmarks.tsx
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -231,9 +231,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  backButton: {
-    padding: 6,
-  },
   headerActionButton: {
     width: 38,
     height: 38,
@@ -251,11 +248,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-  },
-  headerBtn: {
-    padding: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 20,

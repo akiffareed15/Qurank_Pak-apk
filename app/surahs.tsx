@@ -81,7 +81,7 @@ export default function SurahsScreen() {
   );
 
   const getItemLayout = useCallback(
-    (_: any, index: number) => ({
+    (_: ArrayLike<Surah> | null | undefined, index: number) => ({
       length: 72,
       offset: 72 * index,
       index,

@@ -443,9 +443,6 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 1,
   },
-  backButton: {
-    padding: 6,
-  },
   headerTitle: {
     fontSize: 20,
     fontWeight: '600',

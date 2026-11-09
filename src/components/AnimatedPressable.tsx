@@ -1,7 +1,13 @@
 // src/components/AnimatedPressable.tsx
 
 import React from 'react';
-import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
+import {
+  Pressable,
+  PressableProps,
+  StyleProp,
+  ViewStyle,
+  GestureResponderEvent,
+} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -33,7 +39,7 @@ export const AnimatedPressable: React.FC<AnimatedPressableProps> = ({
     };
   });
 
-  const handlePressIn = (e: any) => {
+  const handlePressIn = (e: GestureResponderEvent) => {
     scale.value = withSpring(scaleTo, {
       damping: 15,
       stiffness: 250,
@@ -42,7 +48,7 @@ export const AnimatedPressable: React.FC<AnimatedPressableProps> = ({
     onPressIn?.(e);
   };
 
-  const handlePressOut = (e: any) => {
+  const handlePressOut = (e: GestureResponderEvent) => {
     scale.value = withSpring(1, {
       damping: 15,
       stiffness: 250,

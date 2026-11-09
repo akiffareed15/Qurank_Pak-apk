@@ -22,7 +22,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import { typography } from '../theme/typography';
 import { toArabicNumber } from '../utils/arabicNumber';
-import { StarBadge } from './StarBadge';
 import { GeometricPattern } from './GeometricPattern';
 import type { PageContent, Surah, Ayah } from '../types/quran';
 

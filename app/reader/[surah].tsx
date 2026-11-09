@@ -10,6 +10,8 @@ import {
   Dimensions,
   ViewToken,
   ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -222,7 +224,7 @@ export default function ReaderScreen() {
     [setLastRead]
   );
 
-  const handleScroll = useCallback((event: any) => {
+  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     setHasScrolled(offsetY > 20);
   }, []);
@@ -234,7 +236,7 @@ export default function ReaderScreen() {
     [toggleBookmark]
   );
 
-  const handleSelectAyah = useCallback((surah: number, ayah: any) => {
+  const handleSelectAyah = useCallback((surah: number, ayah: Ayah) => {
     setSelectedAyah({ surah, ayah });
   }, []);
 
@@ -756,11 +758,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-  },
-  headerButton: {
-    padding: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   headerActionButton: {
     width: 38,

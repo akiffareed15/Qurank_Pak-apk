@@ -2,7 +2,7 @@
 // Animated Starting / App Loading Page for Noor-ul-Quran
 
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -17,8 +17,6 @@ import Animated, {
 import Svg, { Rect, Circle, G } from 'react-native-svg';
 import { GeometricPattern } from './GeometricPattern';
 import { typography } from '../theme/typography';
-
-const { width, height } = Dimensions.get('window');
 
 interface AppSplashScreenProps {
   onAnimationComplete: () => void;
