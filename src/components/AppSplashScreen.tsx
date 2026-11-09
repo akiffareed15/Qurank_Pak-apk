@@ -8,7 +8,7 @@ import {
   Text,
   StyleSheet,
   Image,
-  useWindowDimensions,
+  Dimensions,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -203,7 +203,11 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
   onAnimationComplete,
   isReady,
 }) => {
-  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  // Use physical screen dimensions (including navigation bar) for 100% full bleed
+  const screenDimensions = Dimensions.get('screen');
+  const windowDimensions = Dimensions.get('window');
+  const screenWidth = Math.max(screenDimensions.width, windowDimensions.width);
+  const screenHeight = Math.max(screenDimensions.height, windowDimensions.height);
 
   // Animation values
   const bgOpacity = useSharedValue(0);
@@ -330,19 +334,26 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
   }));
 
   // Full-bleed proportional placement:
-  // Medallion top: ~25% of screen height (centered between hanging lanterns)
-  // Loading section bottom: ~8% of screen height (in front of bottom mosque entrance)
-  const brandSectionTop = Math.max(windowHeight * 0.25, 170);
-  const loadingSectionBottom = Math.max(windowHeight * 0.08, 56);
+  // Medallion top: ~24.5% of total screen height (centered between hanging lanterns)
+  // Loading section bottom: lifted to ~12% (clearly above the dark green arch)
+  const brandSectionTop = Math.max(screenHeight * 0.245, 175);
+  const loadingSectionBottom = Math.max(screenHeight * 0.12, 94);
 
   return (
     <Animated.View style={[styles.container, containerAnimatedStyle]}>
-      {/* Full-Bleed Edge-to-Edge Background Artwork (Zero Gaps, Zero Letterboxing) */}
-      <Animated.View style={[StyleSheet.absoluteFillObject, bgAnimatedStyle]} pointerEvents="none">
+      {/* Full-Bleed Edge-to-Edge Background Artwork covering 100% of physical glass panel */}
+      <Animated.View
+        style={[
+          styles.bgContainer,
+          bgAnimatedStyle,
+          { width: screenWidth, height: screenHeight },
+        ]}
+        pointerEvents="none"
+      >
         <Image
           source={require('../../assets/loading.png')}
-          style={{ width: windowWidth, height: windowHeight }}
-          resizeMode="stretch"
+          style={{ width: screenWidth, height: screenHeight }}
+          resizeMode="cover"
         />
       </Animated.View>
 
@@ -351,12 +362,12 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
         style={[styles.brandSection, { top: brandSectionTop }]}
         pointerEvents="none"
       >
-        {/* Prominent Golden Islamic Rosette Medallion with Original Logo */}
+        {/* Prominent Golden Islamic Rosette Medallion with New Ultra-HD Logo */}
         <Animated.View style={[styles.medallionWrapper, medallionAnimatedStyle]}>
           <RosetteMedallion size={184} />
           <View style={styles.logoBadgeContainer}>
             <Image
-              source={require('../../assets/logo/logo_app.png')}
+              source={require('../../assets/logo/logo_app2.png')}
               style={styles.logoImage}
               resizeMode="contain"
             />
@@ -381,7 +392,7 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
         </Animated.View>
       </View>
 
-      {/* Lower Loading Section (Preserved Original Capsule Bar + "LOADING...") */}
+      {/* Lower Loading Section (Lifted cleanly above bottom green arch) */}
       <Animated.View
         style={[
           styles.loadingSection,
@@ -397,7 +408,7 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
           </Animated.View>
         </View>
 
-        {/* ─── LOADING... ─── (Original Dimensions Preserved) */}
+        {/* ─── LOADING... ─── (Lifted cleanly into ivory area with high contrast) */}
         <View style={styles.loadingTextRow}>
           <View style={styles.loadingLine} />
           <Text style={styles.loadingText}>L O A D I N G . . .</Text>
@@ -412,7 +423,14 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: '#F6F3EC', // Warm Ivory
+    overflow: 'hidden',
     zIndex: 9999,
+  },
+  bgContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    overflow: 'hidden',
   },
   brandSection: {
     position: 'absolute',
@@ -543,8 +561,11 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#A68038', // Antique Warm Gold
+    color: '#B58D3D', // Luminous Warm Gold
     letterSpacing: 3.5,
     marginHorizontal: 10,
+    textShadowColor: 'rgba(255, 255, 255, 0.90)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
 });

@@ -10,6 +10,7 @@ import {
   Image,
   ScrollView,
   useWindowDimensions,
+  Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -39,25 +40,10 @@ export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { isDark } = useTheme();
-  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-
-  // Strict BoxFit.contain calculation:
-  // Guarantees ZERO cropping, ZERO zooming, ZERO stretching, and ZERO distortion.
-  // The entire original portrait artwork (top arch, lanterns, middle arabesques,
-  // crescent moon, and the full mosque at the bottom) remains 100% visible.
-  let bgWidth = windowWidth;
-  let bgHeight = windowHeight;
-
-  const windowAspectRatio = windowWidth / windowHeight;
-  if (windowAspectRatio < IMAGE_ASPECT_RATIO) {
-    // Screen is taller than the image: fit width, scale height by aspect ratio
-    bgWidth = windowWidth;
-    bgHeight = windowWidth / IMAGE_ASPECT_RATIO;
-  } else {
-    // Screen is wider than the image: fit height, scale width by aspect ratio
-    bgHeight = windowHeight;
-    bgWidth = windowHeight * IMAGE_ASPECT_RATIO;
-  }
+  const screenDimensions = Dimensions.get('screen');
+  const windowDimensions = Dimensions.get('window');
+  const screenWidth = Math.max(screenDimensions.width, windowDimensions.width);
+  const screenHeight = Math.max(screenDimensions.height, windowDimensions.height);
 
   const lastSurah = useLastReadStore((s) => s.surah);
   const lastAyah = useLastReadStore((s) => s.ayah);
@@ -113,7 +99,7 @@ export default function HomeScreen() {
         <Image
           key={isDark ? 'dark-bg' : 'light-bg'}
           source={bgImage}
-          style={{ width: windowWidth, height: windowHeight }}
+          style={{ width: screenWidth, height: screenHeight }}
           resizeMode="cover"
         />
       </View>
