@@ -1,22 +1,33 @@
 // src/components/AppSplashScreen.tsx
-// Animated Starting / App Loading Page for Noor-ul-Quran
+// Premium, Peaceful Light-Theme Startup Loading Animation for Noor-ul-Quran
 
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  useWindowDimensions,
+} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  withSpring,
   withRepeat,
-  withSequence,
+  withDelay,
   Easing,
   runOnJS,
   ReduceMotion,
 } from 'react-native-reanimated';
-import Svg, { Rect, Circle, G } from 'react-native-svg';
-import { GeometricPattern } from './GeometricPattern';
 import { typography } from '../theme/typography';
+
+// Dimensions of the original portrait artwork (704 x 1520)
+const ORIGINAL_IMAGE_WIDTH = 704;
+const ORIGINAL_IMAGE_HEIGHT = 1520;
+const IMAGE_ASPECT_RATIO = ORIGINAL_IMAGE_WIDTH / ORIGINAL_IMAGE_HEIGHT;
+
+const TRACK_WIDTH = 140;
+const BAR_WIDTH = 48;
 
 interface AppSplashScreenProps {
   onAnimationComplete: () => void;
@@ -27,88 +38,95 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
   onAnimationComplete,
   isReady,
 }) => {
-  // Shared animation values
-  const logoScale = useSharedValue(0.7);
-  const logoOpacity = useSharedValue(0);
-  const contentTranslateY = useSharedValue(20);
-  const contentOpacity = useSharedValue(0);
-  const pulseScale = useSharedValue(1);
-  const containerOpacity = useSharedValue(1);
-  const containerScale = useSharedValue(1);
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
-  // Decorative background rosette rotation
-  const rosetteRotation = useSharedValue(0);
+  // Strict aspect-ratio containment (preserves full arch, lanterns, and bottom mosque)
+  let bgWidth = windowWidth;
+  let bgHeight = windowHeight;
+
+  const windowAspectRatio = windowWidth / windowHeight;
+  if (windowAspectRatio < IMAGE_ASPECT_RATIO) {
+    bgWidth = windowWidth;
+    bgHeight = windowWidth / IMAGE_ASPECT_RATIO;
+  } else {
+    bgHeight = windowHeight;
+    bgWidth = windowHeight * IMAGE_ASPECT_RATIO;
+  }
+
+  // Animation values
+  const bgOpacity = useSharedValue(0);
+  const logoOpacity = useSharedValue(0);
+  const logoScale = useSharedValue(0.92);
+  const contentOpacity = useSharedValue(0);
+  const contentTranslateY = useSharedValue(12);
+  const progressTranslateX = useSharedValue(-BAR_WIDTH);
+  const containerOpacity = useSharedValue(1);
 
   useEffect(() => {
-    // 1. Entrance animation for logo
-    logoScale.value = withSpring(1, {
-      damping: 12,
-      stiffness: 90,
-      reduceMotion: ReduceMotion.System,
-    });
-    logoOpacity.value = withTiming(1, {
-      duration: 650,
+    // Phase 1: Background appearance (smooth, gentle fade-in)
+    bgOpacity.value = withTiming(1, {
+      duration: 450,
+      easing: Easing.out(Easing.ease),
       reduceMotion: ReduceMotion.System,
     });
 
-    // 2. Entrance for text & Bismillah
-    contentTranslateY.value = withTiming(0, {
-      duration: 700,
-      easing: Easing.out(Easing.cubic),
-      reduceMotion: ReduceMotion.System,
-    });
-    contentOpacity.value = withTiming(1, {
-      duration: 750,
-      reduceMotion: ReduceMotion.System,
-    });
+    // Phase 2: Original logo appearance (gentle opacity & subtle scale)
+    logoOpacity.value = withDelay(
+      150,
+      withTiming(1, {
+        duration: 600,
+        easing: Easing.out(Easing.cubic),
+        reduceMotion: ReduceMotion.System,
+      })
+    );
+    logoScale.value = withDelay(
+      150,
+      withTiming(1, {
+        duration: 600,
+        easing: Easing.out(Easing.cubic),
+        reduceMotion: ReduceMotion.System,
+      })
+    );
 
-    // 3. Gentle rosette rotation
-    rosetteRotation.value = withRepeat(
-      withTiming(360, {
-        duration: 24000,
-        easing: Easing.linear,
+    // Phase 3: Application branding (Arabic title, English title, Bismillah)
+    contentOpacity.value = withDelay(
+      300,
+      withTiming(1, {
+        duration: 650,
+        easing: Easing.out(Easing.cubic),
+        reduceMotion: ReduceMotion.System,
+      })
+    );
+    contentTranslateY.value = withDelay(
+      300,
+      withTiming(0, {
+        duration: 650,
+        easing: Easing.out(Easing.cubic),
+        reduceMotion: ReduceMotion.System,
+      })
+    );
+
+    // Phase 4: Antique-gold indeterminate loading indicator
+    progressTranslateX.value = withRepeat(
+      withTiming(TRACK_WIDTH, {
+        duration: 1300,
+        easing: Easing.inOut(Easing.sin),
         reduceMotion: ReduceMotion.System,
       }),
       -1,
       false
     );
-
-    // 4. Subtle breathing pulse on the logo
-    const pulseTimer = setTimeout(() => {
-      pulseScale.value = withRepeat(
-        withSequence(
-          withTiming(1.05, {
-            duration: 1800,
-            easing: Easing.inOut(Easing.ease),
-            reduceMotion: ReduceMotion.System,
-          }),
-          withTiming(1, {
-            duration: 1800,
-            easing: Easing.inOut(Easing.ease),
-            reduceMotion: ReduceMotion.System,
-          })
-        ),
-        -1,
-        true
-      );
-    }, 450);
-
-    return () => clearTimeout(pulseTimer);
   }, []);
 
-  // When app is ready (fonts + stores), smoothly fade out after minimum smooth display time
+  // Phase 5: Smooth exit transition when initialization completes
   useEffect(() => {
     if (isReady) {
-      const exitTimer = setTimeout(() => {
-        containerOpacity.value = withTiming(0, {
-          duration: 550,
-          easing: Easing.inOut(Easing.ease),
-          reduceMotion: ReduceMotion.System,
-        });
-        containerScale.value = withTiming(
-          1.04,
+      // Ensure a minimum peaceful display time (~850ms) for visual harmony
+      const timer = setTimeout(() => {
+        containerOpacity.value = withTiming(
+          0,
           {
-            duration: 550,
+            duration: 450,
             easing: Easing.out(Easing.ease),
             reduceMotion: ReduceMotion.System,
           },
@@ -118,15 +136,19 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
             }
           }
         );
-      }, 2000); // 2 seconds display for a premium, calm first impression
+      }, 850);
 
-      return () => clearTimeout(exitTimer);
+      return () => clearTimeout(timer);
     }
   }, [isReady]);
 
+  const bgAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: bgOpacity.value,
+  }));
+
   const logoAnimatedStyle = useAnimatedStyle(() => ({
     opacity: logoOpacity.value,
-    transform: [{ scale: logoScale.value * pulseScale.value }],
+    transform: [{ scale: logoScale.value }],
   }));
 
   const contentAnimatedStyle = useAnimatedStyle(() => ({
@@ -134,39 +156,31 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
     transform: [{ translateY: contentTranslateY.value }],
   }));
 
-  const rosetteAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rosetteRotation.value}deg` }],
+  const progressBarAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: progressTranslateX.value }],
   }));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: containerOpacity.value,
-    transform: [{ scale: containerScale.value }],
   }));
 
   return (
     <Animated.View style={[styles.container, containerAnimatedStyle]}>
-      {/* Background Islamic Geometric Pattern */}
-      <GeometricPattern opacity={0.08} />
+      {/* Background Container holding the original portrait artwork */}
+      <Animated.View style={[styles.bgContainer, bgAnimatedStyle]} pointerEvents="none">
+        <Image
+          source={require('../../assets/loading.png')}
+          style={{
+            width: bgWidth,
+            height: bgHeight,
+          }}
+          resizeMode="contain"
+        />
+      </Animated.View>
 
-      {/* Rotating Background Sacred Rosette */}
-      <View style={styles.rosetteContainer} pointerEvents="none">
-        <Animated.View style={rosetteAnimatedStyle}>
-          <Svg width={320} height={320} viewBox="0 0 320 320">
-            <G stroke="rgba(255, 255, 255, 0.08)" strokeWidth="1.2" fill="none">
-              <Circle cx="160" cy="160" r="145" strokeDasharray="5, 5" />
-              <Circle cx="160" cy="160" r="130" strokeWidth="1" />
-              <Rect x="60" y="60" width="200" height="200" rx="20" />
-              <Rect x="60" y="60" width="200" height="200" rx="20" origin="160, 160" rotation={45} />
-              <Rect x="80" y="80" width="160" height="160" rx="14" stroke="rgba(255, 255, 255, 0.05)" origin="160, 160" rotation={22.5} />
-              <Rect x="80" y="80" width="160" height="160" rx="14" stroke="rgba(255, 255, 255, 0.05)" origin="160, 160" rotation={67.5} />
-            </G>
-          </Svg>
-        </Animated.View>
-      </View>
-
-      {/* Center Content: Logo + Branding */}
-      <View style={styles.centerContent}>
-        {/* Animated App Logo with Soft White Shade & Halo */}
+      {/* Central Content: Logo + Branding + Loading Indicator */}
+      <View style={styles.centerContent} pointerEvents="none">
+        {/* Original Noor-ul-Quran Logo */}
         <Animated.View style={[styles.logoWrapper, logoAnimatedStyle]}>
           <View style={styles.logoHalo}>
             <View style={styles.logoContainer}>
@@ -179,19 +193,17 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
           </View>
         </Animated.View>
 
-        {/* Animated Titles */}
+        {/* Application Branding */}
         <Animated.View style={[styles.titlesContainer, contentAnimatedStyle]}>
           <Text style={styles.arabicTitle}>القرآن الكريم</Text>
           <Text style={styles.englishTitle}>NOOR-UL-QURAN</Text>
-          <Text style={styles.bismillahText}>بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</Text>
-        </Animated.View>
-      </View>
+          <Text style={styles.bismillahText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
 
-      {/* Bottom Subtle Shimmer Indicator */}
-      <View style={styles.bottomContainer}>
-        <View style={styles.loadingTrack}>
-          <View style={styles.loadingDot} />
-        </View>
+          {/* Antique-Gold Loading Indicator */}
+          <View style={styles.loadingTrack}>
+            <Animated.View style={[styles.loadingBar, progressBarAnimatedStyle]} />
+          </View>
+        </Animated.View>
       </View>
     </Animated.View>
   );
@@ -200,15 +212,16 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#084F38', // Deep Emerald
+    backgroundColor: '#F6F3EC', // Warm Ivory & Cream
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 9999,
   },
-  rosetteContainer: {
+  bgContainer: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   centerContent: {
     alignItems: 'center',
@@ -217,32 +230,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   logoWrapper: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   logoHalo: {
-    padding: 8,
-    borderRadius: 82,
-    backgroundColor: 'rgba(255, 255, 255, 0.22)',
-    shadowColor: '#FFFFFF',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.55,
-    shadowRadius: 24,
-    elevation: 10,
+    padding: 6,
+    borderRadius: 56,
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    shadowColor: '#053E27',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 4,
   },
   logoContainer: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
     backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderWidth: 2.5,
-    borderColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(13, 102, 70, 0.28)',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
   logoImage: {
-    width: 118,
-    height: 118,
+    width: 76,
+    height: 76,
   },
   titlesContainer: {
     alignItems: 'center',
@@ -250,51 +263,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   arabicTitle: {
-    fontSize: 42,
-    lineHeight: 66,
-    color: '#FFFFFF',
+    fontSize: 38,
+    lineHeight: 58,
+    color: '#053E27',
     fontFamily: typography.fontFamily.amiri,
     textAlign: 'center',
-    paddingVertical: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.35)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 8,
+    paddingVertical: 2,
+    textShadowColor: 'rgba(255, 255, 255, 0.92)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
   },
   englishTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#E8F5EE',
+    fontSize: 12.5,
+    fontWeight: '800',
+    color: '#0D6646',
     letterSpacing: 4.5,
-    marginTop: 4,
+    marginTop: 2,
     textAlign: 'center',
   },
   bismillahText: {
-    fontSize: 19,
-    lineHeight: 34,
-    color: 'rgba(255, 255, 255, 0.85)',
+    fontSize: 18,
+    lineHeight: 32,
+    color: '#2D5E4E',
     fontFamily: typography.fontFamily.amiri,
-    marginTop: 10,
+    marginTop: 8,
     paddingVertical: 2,
     textAlign: 'center',
   },
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   loadingTrack: {
-    width: 60,
-    height: 3,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    width: TRACK_WIDTH,
+    height: 3.5,
+    backgroundColor: 'rgba(212, 175, 55, 0.22)', // Antique Gold Track
     borderRadius: 2,
     overflow: 'hidden',
+    marginTop: 24,
   },
-  loadingDot: {
-    width: 24,
+  loadingBar: {
+    width: BAR_WIDTH,
     height: '100%',
-    backgroundColor: '#3DB88A',
+    backgroundColor: '#C5A059', // Rich Antique Gold
     borderRadius: 2,
   },
 });
-

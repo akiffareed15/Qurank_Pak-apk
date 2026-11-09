@@ -21,7 +21,7 @@ export const useSettingsStore = create<SettingsState>()(
       arabicSize: 28,
       translationSize: 16,
       showTranslation: true,
-      theme: 'dark', // Pre-default dark theme for new users
+      theme: 'light', // Default to Light theme for new installations
       readingMode: 'mushaf', // Default to authentic 604 Madinah Mushaf Page Mode
       _hasHydrated: false,
       setArabicSize: (arabicSize) => set({ arabicSize }),

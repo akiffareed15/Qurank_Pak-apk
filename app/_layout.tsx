@@ -17,11 +17,10 @@ import { AppSplashScreen } from '../src/components/AppSplashScreen';
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor="transparent" translucent />
       <Stack
         screenOptions={{
           headerShown: false,
@@ -36,6 +35,35 @@ function RootNavigator() {
         <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </View>
+  );
+}
+
+function AppContent({
+  isReady,
+  showSplash,
+  onSplashComplete,
+}: {
+  isReady: boolean;
+  showSplash: boolean;
+  onSplashComplete: () => void;
+}) {
+  const { isDark } = useTheme();
+
+  return (
+    <>
+      <StatusBar
+        style={showSplash ? 'dark' : isDark ? 'light' : 'dark'}
+        backgroundColor="transparent"
+        translucent
+      />
+      {isReady && <RootNavigator />}
+      {showSplash && (
+        <AppSplashScreen
+          isReady={isReady}
+          onAnimationComplete={onSplashComplete}
+        />
+      )}
+    </>
   );
 }
 
@@ -54,19 +82,22 @@ export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
+  // Immediately hand off from native Android splash to single custom loading animation
+  useEffect(() => {
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
+
   useEffect(() => {
     // Check if fonts and hydration are ready
     if ((fontsLoaded || fontError) && settingsHydrated && lastReadHydrated && bookmarksHydrated) {
       setIsReady(true);
-      SplashScreen.hideAsync().catch(() => {});
     }
   }, [fontsLoaded, fontError, settingsHydrated, lastReadHydrated, bookmarksHydrated]);
 
-  // Fallback timer to hide native splash screen even if hydration took longer than expected
+  // Fallback timer to mark ready even if an asset takes slightly longer
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsReady(true);
-      SplashScreen.hideAsync().catch(() => {});
     }, 1500);
     return () => clearTimeout(timer);
   }, []);
@@ -75,13 +106,11 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.container}>
       <SafeAreaProvider>
         <ThemeProvider>
-          {isReady && <RootNavigator />}
-          {showSplash && (
-            <AppSplashScreen
-              isReady={isReady}
-              onAnimationComplete={() => setShowSplash(false)}
-            />
-          )}
+          <AppContent
+            isReady={isReady}
+            showSplash={showSplash}
+            onSplashComplete={() => setShowSplash(false)}
+          />
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
@@ -93,4 +122,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-

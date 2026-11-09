@@ -15,9 +15,9 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  colors: darkColors,
-  isDark: true,
-  themeMode: 'dark',
+  colors: lightColors,
+  isDark: false,
+  themeMode: 'light',
   setThemeMode: () => {},
   toggleTheme: () => {},
 });
