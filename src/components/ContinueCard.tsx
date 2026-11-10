@@ -8,7 +8,7 @@ import { useTheme } from '../shared/theme/ThemeProvider';
 import { AnimatedPressable } from '../shared/components/AnimatedPressable';
 import { StarBadge } from '../shared/components/StarBadge';
 import { typography } from '../shared/theme/typography';
-import { quranRepository } from '../data/quranRepository';
+import { quranRepository } from '../features/quran';
 
 interface ContinueCardProps {
   surahNumber: number | null;

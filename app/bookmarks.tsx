@@ -23,8 +23,8 @@ import { StarBadge } from '../src/shared/components/StarBadge';
 import { EmptyState } from '../src/shared/components/EmptyState';
 import { ThemeToggleButton } from '../src/shared/components/ThemeToggleButton';
 import { useBookmarksStore } from '../src/store/bookmarksStore';
-import { quranRepository } from '../src/data/quranRepository';
-import type { Bookmark } from '../src/types/quran';
+import { quranRepository } from '../src/features/quran';
+import type { Bookmark } from '../src/features/quran';
 
 export default function BookmarksScreen() {
   const router = useRouter();

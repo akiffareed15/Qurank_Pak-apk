@@ -9,7 +9,7 @@ vm.runInNewContext(metaContent, sandbox);
 
 const rawPages = sandbox.QuranData.Page;
 const rawJuz = sandbox.QuranData.Juz;
-const surahs = require('../src/data/quran/surahs.json');
+const surahs = require('../src/features/quran/data/surahs.json');
 
 function getJuz(s, a) {
   let j = 1;
@@ -76,7 +76,7 @@ const output = {
 };
 
 fs.writeFileSync(
-  path.join(__dirname, '../src/data/quran/pages.json'),
+  path.join(__dirname, '../src/features/quran/data/pages.json'),
   JSON.stringify(output, null, 2),
   'utf-8'
 );

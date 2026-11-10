@@ -28,7 +28,7 @@ export type Bookmark = {
   createdAt: number;
 };
 
-export type { ThemeMode, ReadingMode, Settings } from '../shared/types';
+export type { ThemeMode, ReadingMode, Settings } from '../../shared/types';
 
 export type PageAyahRef = {
   surah: number;

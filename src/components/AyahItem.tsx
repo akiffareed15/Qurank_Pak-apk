@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../shared/theme/ThemeProvider';
 import { typography } from '../shared/theme/typography';
 import { toArabicNumber } from '../utils/arabicNumber';
-import type { Ayah } from '../types/quran';
+import type { Ayah } from '../features/quran';
 
 interface AyahItemProps {
   ayah: Ayah;

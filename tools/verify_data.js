@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const surahs = require('../src/data/quran/surahs.json');
+const surahs = require('../src/features/quran/data/surahs.json');
 console.log(`Checking ${surahs.length} surahs...`);
 
 let totalAyahs = 0;
@@ -10,7 +10,7 @@ let errors = 0;
 
 for (let s of surahs) {
   const padded = String(s.number).padStart(3, '0');
-  const surahPath = path.resolve(__dirname, `../src/data/quran/surah_${padded}.json`);
+  const surahPath = path.resolve(__dirname, `../src/features/quran/data/surah_${padded}.json`);
   if (!fs.existsSync(surahPath)) {
     console.error(`File missing: surah_${padded}.json`);
     errors++;

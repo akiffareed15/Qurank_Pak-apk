@@ -6,10 +6,10 @@ import type {
   PageMeta,
   PageContent,
   PageItem,
-} from '../types/quran';
-import surahsData from './quran/surahs.json';
-import pagesData from './quran/pages.json';
-import { surahLoaders } from './quran/index';
+} from './types';
+import surahsData from './data/surahs.json';
+import pagesData from './data/pages.json';
+import { surahLoaders } from './data/index';
 
 const surahs: Surah[] = surahsData as Surah[];
 const pagesMeta: PageMeta[] = pagesData.pages as PageMeta[];

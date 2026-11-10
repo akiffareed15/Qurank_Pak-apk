@@ -9,8 +9,8 @@ import { useTheme } from '../src/shared/theme/ThemeProvider';
 import { SearchBar } from '../src/components/SearchBar';
 import { SurahRow } from '../src/components/SurahRow';
 import { EmptyState } from '../src/shared/components/EmptyState';
-import { quranRepository } from '../src/data/quranRepository';
-import type { Surah } from '../src/types/quran';
+import { quranRepository } from '../src/features/quran';
+import type { Surah } from '../src/features/quran';
 
 const SurahListItem = React.memo<{
   item: Surah;

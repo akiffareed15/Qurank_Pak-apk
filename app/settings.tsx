@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../src/shared/theme/ThemeProvider';
 import { typography } from '../src/shared/theme/typography';
 import { useSettingsStore } from '../src/shared/store/settingsStore';
-import type { ThemeMode } from '../src/types/quran';
+import type { ThemeMode } from '../src/shared/types';
 
 const PREVIEW_BISMILLAH = 'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ';
 const PREVIEW_TRANSLATION =
