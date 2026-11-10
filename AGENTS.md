@@ -10,12 +10,12 @@ Offline Quran Reading App for Android (phone), built in **React Native**. First 
 - Expo Router (file-based navigation)
 - Zustand (state) + AsyncStorage (persist settings, last read, bookmarks)
 - `expo-font` for the Quran font, `expo-splash-screen`, `react-native-reanimated`, `react-native-svg`
-- Quran text: bundled JSON in `src/data/quran/` (see `docs/DATA.md`)
+- Quran text: bundled JSON in `src/features/quran/data/` (see `docs/DATA.md`)
 - No backend, no network libraries, no analytics, no ads, no paywall (these come in later versions)
 
 ## Design rules (see docs/DESIGN.md — follow exactly)
 - Very little text, no extra buttons. Only the elements listed in DESIGN.md exist on each screen.
-- Colours ONLY from `src/theme/colors.ts` (emerald green + white family). No gold, gradients, purple/blue, blur, emoji.
+- Colours ONLY from `src/shared/theme/colors.ts` (emerald green + white family). No gold, gradients, purple/blue, blur, emoji.
 - Light animations are mandatory (list in DESIGN.md) using `react-native-reanimated`.
 - If screenshots exist in `docs/design/` (from Stitch), match their layout; tokens still decide colours.
 
@@ -31,7 +31,7 @@ Offline Quran Reading App for Android (phone), built in **React Native**. First 
 ## Working style
 - Follow `docs/TASKS.md` step by step. After each step the app must run.
 - Small commits with clear messages (`feat: surah list screen`, `fix: reader scroll restore`).
-- Keep layers separate: `src/data` (loading, storage), `src/store` (Zustand), `src/components`, `app/` (screens only). No data logic inside screens.
+- Feature-based modular structure: `src/features/<feature>/` (quran, reader, surahs, bookmarks, home) with public APIs via `index.ts`, `src/shared/` (shared components, store, theme), and `app/` (screens only). No data logic inside screens. Features only import shared/ and other features through their `index.ts`.
 - TypeScript types for all data. No `any`.
 - Tick the checkbox in `docs/TASKS.md` when a step is done.
 - If the same error repeats 3 times, stop and follow `docs/AI_WORKFLOW.md` (do not keep retrying the same fix).

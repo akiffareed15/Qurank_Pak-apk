@@ -21,7 +21,7 @@ python tools/convert_quran.py \
   --arabic tools/source/quran-uthmani.txt \
   --translation tools/source/translation.txt \
   --meta tools/source/quran-data.js \
-  --out src/data/quran
+  --out src/features/quran/data
 ```
 Creates `surahs.json`, `surah_001.json … surah_114.json`, and `index.ts` (lazy loaders).
 
