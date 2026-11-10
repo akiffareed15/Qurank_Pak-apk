@@ -334,9 +334,9 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
   }));
 
   // Full-bleed proportional placement:
-  // Medallion top: ~22.4% of total screen height (centered between hanging lanterns)
+  // Medallion top: ~23% of total screen height (centered between hanging lanterns)
   // Loading section bottom: lifted to ~12% (clearly above the dark green arch)
-  const brandSectionTop = Math.max(screenHeight * 0.224, 166);
+  const brandSectionTop = Math.max(screenHeight * 0.23, 172);
   const loadingSectionBottom = Math.max(screenHeight * 0.12, 94);
 
   return (
@@ -362,22 +362,20 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
         style={[styles.brandSection, { top: brandSectionTop }]}
         pointerEvents="none"
       >
-        {/* Prominent Golden Islamic Rosette Medallion with New Ultra-HD Logo */}
+        {/* Prominent Golden Islamic Rosette Medallion with Enlarged Ultra-HD Logo */}
         <Animated.View style={[styles.medallionWrapper, medallionAnimatedStyle]}>
-          <RosetteMedallion size={184} />
+          <RosetteMedallion size={216} />
           <View style={styles.logoBadgeContainer}>
             <Image
-              source={require('../../assets/logo/emblem_clean.png')}
+              source={require('../../assets/logo/logo_app2.png')}
               style={styles.logoImage}
               resizeMode="contain"
             />
           </View>
         </Animated.View>
 
-        {/* Application Branding with enhanced, grand sizes */}
+        {/* Application Branding without redundant Arabic title */}
         <Animated.View style={[styles.titlesContainer, titlesAnimatedStyle]}>
-          <Text style={styles.arabicTitle}>القرآن الكريم</Text>
-
           {/* Upper Gold Ornament Divider */}
           <GoldDivider />
 
@@ -440,11 +438,11 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   medallionWrapper: {
-    width: 184,
-    height: 184,
+    width: 216,
+    height: 216,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24, // Generous breathing space preventing bottom golden ray from touching Arabic calligraphy
+    marginBottom: 16,
     shadowColor: '#C5A059',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.28,
@@ -453,30 +451,19 @@ const styles = StyleSheet.create({
   },
   logoBadgeContainer: {
     position: 'absolute',
-    width: 106,
-    height: 106,
+    width: 124,
+    height: 124,
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoImage: {
-    width: 92,
-    height: 92,
+    width: 110,
+    height: 110,
   },
   titlesContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-  },
-  arabicTitle: {
-    fontSize: 42,
-    lineHeight: 56,
-    color: '#064E3B', // Rich Islamic Emerald Green
-    fontFamily: typography.fontFamily.scheherazade,
-    textAlign: 'center',
-    marginBottom: 2,
-    textShadowColor: 'rgba(255, 255, 255, 0.90)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
   },
   dividerRow: {
     flexDirection: 'row',
@@ -485,7 +472,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   dividerLine: {
-    width: 86,
+    width: 90,
     height: 1,
     backgroundColor: '#C5A059', // Antique Gold
     opacity: 0.85,
@@ -494,19 +481,19 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   englishTitle: {
-    fontSize: 16.5,
+    fontSize: 18,
     fontWeight: '800',
     color: '#064E3B',
-    letterSpacing: 5.5,
+    letterSpacing: 6,
     textAlign: 'center',
-    marginVertical: 2,
+    marginVertical: 4,
   },
   bismillahText: {
-    fontSize: 22,
-    lineHeight: 34,
+    fontSize: 24,
+    lineHeight: 38,
     color: '#064E3B',
     fontFamily: typography.fontFamily.scheherazade,
-    marginTop: 6,
+    marginTop: 8,
     textAlign: 'center',
   },
   loadingSection: {
