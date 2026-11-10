@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '../shared/theme/ThemeProvider';
-import { typography } from '../shared/theme/typography';
+import { useTheme } from '../../../shared/theme/ThemeProvider';
+import { typography } from '../../../shared/theme/typography';
 
 const BISMILLAH_TEXT = 'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ';
 

@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { useTheme } from '../shared/theme/ThemeProvider';
-import { StarBadge } from '../shared/components/StarBadge';
-import { typography } from '../shared/theme/typography';
-import type { Surah } from '../features/quran';
+import { useTheme } from '../../../shared/theme/ThemeProvider';
+import { StarBadge } from '../../../shared/components/StarBadge';
+import { typography } from '../../../shared/theme/typography';
+import type { Surah } from '../../quran';
 
 interface SurahRowProps {
   surah: Surah;

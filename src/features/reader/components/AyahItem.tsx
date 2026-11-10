@@ -12,10 +12,10 @@ import Animated, {
   ReduceMotion,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../shared/theme/ThemeProvider';
-import { typography } from '../shared/theme/typography';
+import { useTheme } from '../../../shared/theme/ThemeProvider';
+import { typography } from '../../../shared/theme/typography';
 import { toArabicNumber } from '../utils/arabicNumber';
-import type { Ayah } from '../features/quran';
+import type { Ayah } from '../../quran';
 
 interface AyahItemProps {
   ayah: Ayah;

@@ -22,7 +22,7 @@ import { typography } from '../src/shared/theme/typography';
 import { StarBadge } from '../src/shared/components/StarBadge';
 import { EmptyState } from '../src/shared/components/EmptyState';
 import { ThemeToggleButton } from '../src/shared/components/ThemeToggleButton';
-import { useBookmarksStore } from '../src/store/bookmarksStore';
+import { useBookmarksStore } from '../src/features/bookmarks/store/bookmarksStore';
 import { quranRepository } from '../src/features/quran';
 import type { Bookmark } from '../src/features/quran';
 

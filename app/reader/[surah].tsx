@@ -20,12 +20,12 @@ import { useTheme } from '../../src/shared/theme/ThemeProvider';
 import { typography } from '../../src/shared/theme/typography';
 import { quranRepository } from '../../src/features/quran';
 import { useSettingsStore } from '../../src/shared/store/settingsStore';
-import { useLastReadStore } from '../../src/store/lastReadStore';
-import { useBookmarksStore } from '../../src/store/bookmarksStore';
-import { SurahBanner } from '../../src/components/SurahBanner';
-import { BismillahHeader } from '../../src/components/BismillahHeader';
-import { AyahItem } from '../../src/components/AyahItem';
-import { MushafPageView } from '../../src/components/MushafPageView';
+import { useLastReadStore } from '../../src/features/reader/store/lastReadStore';
+import { useBookmarksStore } from '../../src/features/bookmarks/store/bookmarksStore';
+import { SurahBanner } from '../../src/features/reader/components/SurahBanner';
+import { BismillahHeader } from '../../src/features/reader/components/BismillahHeader';
+import { AyahItem } from '../../src/features/reader/components/AyahItem';
+import { MushafPageView } from '../../src/features/reader/components/MushafPageView';
 import { ThemeToggleButton } from '../../src/shared/components/ThemeToggleButton';
 import type { Ayah, Surah } from '../../src/features/quran';
 

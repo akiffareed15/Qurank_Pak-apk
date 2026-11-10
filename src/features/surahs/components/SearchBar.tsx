@@ -4,8 +4,8 @@ import React from 'react';
 import { View, TextInput, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useTheme } from '../shared/theme/ThemeProvider';
-import { ThemeToggleButton } from '../shared/components/ThemeToggleButton';
+import { useTheme } from '../../../shared/theme/ThemeProvider';
+import { ThemeToggleButton } from '../../../shared/components/ThemeToggleButton';
 
 interface SearchBarProps {
   value: string;

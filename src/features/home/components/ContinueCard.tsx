@@ -4,11 +4,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../shared/theme/ThemeProvider';
-import { AnimatedPressable } from '../shared/components/AnimatedPressable';
-import { StarBadge } from '../shared/components/StarBadge';
-import { typography } from '../shared/theme/typography';
-import { quranRepository } from '../features/quran';
+import { useTheme } from '../../../shared/theme/ThemeProvider';
+import { AnimatedPressable } from '../../../shared/components/AnimatedPressable';
+import { StarBadge } from '../../../shared/components/StarBadge';
+import { typography } from '../../../shared/theme/typography';
+import { quranRepository } from '../../quran';
 
 interface ContinueCardProps {
   surahNumber: number | null;

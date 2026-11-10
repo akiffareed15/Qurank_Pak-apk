@@ -4,8 +4,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../shared/theme/ThemeProvider';
-import { AnimatedPressable } from '../shared/components/AnimatedPressable';
+import { useTheme } from '../../../shared/theme/ThemeProvider';
+import { AnimatedPressable } from '../../../shared/components/AnimatedPressable';
 
 interface HomeTileProps {
   title: string;
