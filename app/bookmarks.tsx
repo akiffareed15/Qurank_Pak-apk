@@ -17,11 +17,11 @@ import Animated, {
   ReduceMotion,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../src/theme/ThemeProvider';
-import { typography } from '../src/theme/typography';
-import { StarBadge } from '../src/components/StarBadge';
-import { EmptyState } from '../src/components/EmptyState';
-import { ThemeToggleButton } from '../src/components/ThemeToggleButton';
+import { useTheme } from '../src/shared/theme/ThemeProvider';
+import { typography } from '../src/shared/theme/typography';
+import { StarBadge } from '../src/shared/components/StarBadge';
+import { EmptyState } from '../src/shared/components/EmptyState';
+import { ThemeToggleButton } from '../src/shared/components/ThemeToggleButton';
 import { useBookmarksStore } from '../src/store/bookmarksStore';
 import { quranRepository } from '../src/data/quranRepository';
 import type { Bookmark } from '../src/types/quran';

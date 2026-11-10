@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '../theme/ThemeProvider';
-import { typography } from '../theme/typography';
-import { GeometricPattern } from './GeometricPattern';
+import { useTheme } from '../shared/theme/ThemeProvider';
+import { typography } from '../shared/theme/typography';
+import { GeometricPattern } from '../shared/components/GeometricPattern';
 import type { Surah } from '../types/quran';
 
 interface SurahBannerProps {

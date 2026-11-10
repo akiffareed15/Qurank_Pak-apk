@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { Settings, ThemeMode, ReadingMode } from '../types/quran';
+import type { Settings, ThemeMode, ReadingMode } from '../types';
 
 interface SettingsState extends Settings {
   _hasHydrated: boolean;

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 import { lightColors, darkColors, ColorTokens } from './colors';
 import { useSettingsStore } from '../store/settingsStore';
-import type { ThemeMode } from '../types/quran';
+import type { ThemeMode } from '../types';
 
 interface ThemeContextType {
   colors: ColorTokens;

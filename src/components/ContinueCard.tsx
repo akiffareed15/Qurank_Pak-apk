@@ -4,10 +4,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../theme/ThemeProvider';
-import { AnimatedPressable } from './AnimatedPressable';
-import { StarBadge } from './StarBadge';
-import { typography } from '../theme/typography';
+import { useTheme } from '../shared/theme/ThemeProvider';
+import { AnimatedPressable } from '../shared/components/AnimatedPressable';
+import { StarBadge } from '../shared/components/StarBadge';
+import { typography } from '../shared/theme/typography';
 import { quranRepository } from '../data/quranRepository';
 
 interface ContinueCardProps {

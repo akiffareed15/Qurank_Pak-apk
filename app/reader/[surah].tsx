@@ -16,17 +16,17 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../../src/theme/ThemeProvider';
-import { typography } from '../../src/theme/typography';
+import { useTheme } from '../../src/shared/theme/ThemeProvider';
+import { typography } from '../../src/shared/theme/typography';
 import { quranRepository } from '../../src/data/quranRepository';
-import { useSettingsStore } from '../../src/store/settingsStore';
+import { useSettingsStore } from '../../src/shared/store/settingsStore';
 import { useLastReadStore } from '../../src/store/lastReadStore';
 import { useBookmarksStore } from '../../src/store/bookmarksStore';
 import { SurahBanner } from '../../src/components/SurahBanner';
 import { BismillahHeader } from '../../src/components/BismillahHeader';
 import { AyahItem } from '../../src/components/AyahItem';
 import { MushafPageView } from '../../src/components/MushafPageView';
-import { ThemeToggleButton } from '../../src/components/ThemeToggleButton';
+import { ThemeToggleButton } from '../../src/shared/components/ThemeToggleButton';
 import type { Ayah, Surah } from '../../src/types/quran';
 
 const { width } = Dimensions.get('window');

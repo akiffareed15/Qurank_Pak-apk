@@ -351,7 +351,7 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
         pointerEvents="none"
       >
         <Image
-          source={require('../../assets/loading.png')}
+          source={require('../../../assets/loading.png')}
           style={{ width: screenWidth, height: screenHeight }}
           resizeMode="cover"
         />
@@ -367,7 +367,7 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
           <RosetteMedallion size={216} />
           <View style={styles.logoBadgeContainer}>
             <Image
-              source={require('../../assets/logo/logo_app2.png')}
+              source={require('../../../assets/logo/logo_app2.png')}
               style={styles.logoImage}
               resizeMode="contain"
             />

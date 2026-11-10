@@ -5,10 +5,10 @@ import { View, StyleSheet, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, ReduceMotion } from 'react-native-reanimated';
-import { useTheme } from '../src/theme/ThemeProvider';
+import { useTheme } from '../src/shared/theme/ThemeProvider';
 import { SearchBar } from '../src/components/SearchBar';
 import { SurahRow } from '../src/components/SurahRow';
-import { EmptyState } from '../src/components/EmptyState';
+import { EmptyState } from '../src/shared/components/EmptyState';
 import { quranRepository } from '../src/data/quranRepository';
 import type { Surah } from '../src/types/quran';
 

@@ -19,10 +19,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../theme/ThemeProvider';
-import { typography } from '../theme/typography';
+import { useTheme } from '../shared/theme/ThemeProvider';
+import { typography } from '../shared/theme/typography';
 import { toArabicNumber } from '../utils/arabicNumber';
-import { GeometricPattern } from './GeometricPattern';
+import { GeometricPattern } from '../shared/components/GeometricPattern';
 import type { PageContent, Surah, Ayah } from '../types/quran';
 
 interface MushafPageViewProps {

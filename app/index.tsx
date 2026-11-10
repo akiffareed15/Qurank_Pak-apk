@@ -20,13 +20,13 @@ import Animated, {
   ReduceMotion,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../src/theme/ThemeProvider';
+import { useTheme } from '../src/shared/theme/ThemeProvider';
 import { useLastReadStore } from '../src/store/lastReadStore';
 import { useBookmarksStore } from '../src/store/bookmarksStore';
 import { ContinueCard } from '../src/components/ContinueCard';
 import { HomeTile } from '../src/components/HomeTile';
-import { ThemeToggleButton } from '../src/components/ThemeToggleButton';
-import { typography } from '../src/theme/typography';
+import { ThemeToggleButton } from '../src/shared/components/ThemeToggleButton';
+import { typography } from '../src/shared/theme/typography';
 
 // Official App Name
 export const APP_NAME = 'NOOR-UL-QURAN';

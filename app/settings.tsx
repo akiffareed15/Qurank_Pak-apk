@@ -11,9 +11,9 @@ import {
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../src/theme/ThemeProvider';
-import { typography } from '../src/theme/typography';
-import { useSettingsStore } from '../src/store/settingsStore';
+import { useTheme } from '../src/shared/theme/ThemeProvider';
+import { typography } from '../src/shared/theme/typography';
+import { useSettingsStore } from '../src/shared/store/settingsStore';
 import type { ThemeMode } from '../src/types/quran';
 
 const PREVIEW_BISMILLAH = 'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ';

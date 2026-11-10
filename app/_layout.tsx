@@ -8,11 +8,11 @@ import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ThemeProvider, useTheme } from '../src/theme/ThemeProvider';
-import { useSettingsStore } from '../src/store/settingsStore';
+import { ThemeProvider, useTheme } from '../src/shared/theme/ThemeProvider';
+import { useSettingsStore } from '../src/shared/store/settingsStore';
 import { useLastReadStore } from '../src/store/lastReadStore';
 import { useBookmarksStore } from '../src/store/bookmarksStore';
-import { AppSplashScreen } from '../src/components/AppSplashScreen';
+import { AppSplashScreen } from '../src/shared/components/AppSplashScreen';
 
 // Native splash screen auto-hides as soon as React Native mounts,
 // allowing AppSplashScreen to handle the unified, single startup animation seamlessly.
