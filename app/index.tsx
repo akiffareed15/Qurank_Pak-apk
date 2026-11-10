@@ -21,10 +21,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../src/shared/theme/ThemeProvider';
-import { useLastReadStore } from '../src/features/reader/store/lastReadStore';
-import { useBookmarksStore } from '../src/features/bookmarks/store/bookmarksStore';
-import { ContinueCard } from '../src/features/home/components/ContinueCard';
-import { HomeTile } from '../src/features/home/components/HomeTile';
+import { useLastReadStore } from '../src/features/reader';
+import { useBookmarksStore } from '../src/features/bookmarks';
+import { ContinueCard, HomeTile } from '../src/features/home';
 import { ThemeToggleButton } from '../src/shared/components/ThemeToggleButton';
 import { typography } from '../src/shared/theme/typography';
 

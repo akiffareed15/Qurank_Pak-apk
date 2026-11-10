@@ -10,8 +10,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider, useTheme } from '../src/shared/theme/ThemeProvider';
 import { useSettingsStore } from '../src/shared/store/settingsStore';
-import { useLastReadStore } from '../src/features/reader/store/lastReadStore';
-import { useBookmarksStore } from '../src/features/bookmarks/store/bookmarksStore';
+import { useLastReadStore } from '../src/features/reader';
+import { useBookmarksStore } from '../src/features/bookmarks';
 import { AppSplashScreen } from '../src/shared/components/AppSplashScreen';
 
 // Native splash screen auto-hides as soon as React Native mounts,
