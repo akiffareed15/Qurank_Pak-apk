@@ -367,7 +367,7 @@ export const AppSplashScreen: React.FC<AppSplashScreenProps> = ({
           <RosetteMedallion size={184} />
           <View style={styles.logoBadgeContainer}>
             <Image
-              source={require('../../assets/logo/logo_app2.png')}
+              source={require('../../assets/logo/emblem_clean.png')}
               style={styles.logoImage}
               resizeMode="contain"
             />
